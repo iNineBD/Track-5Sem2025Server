@@ -1,6 +1,12 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	_ "inine-track/docs"
+
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+)
 
 // @title API Inine-Track
 // @version 1.0
@@ -9,6 +15,9 @@ import "github.com/gin-gonic/gin"
 // @BasePath /
 func HandlleRequest() {
 	r := gin.Default()
+
+	// Endpoint Swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run()
 }
