@@ -23,6 +23,7 @@ jobs:
         run: go clean -cache -modcache -testcache -x
 
       - name: Install Dependencies
+        working-directory: src
         run: go mod download
 
       - name: Format Go Code
