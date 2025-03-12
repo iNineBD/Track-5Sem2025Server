@@ -27,10 +27,13 @@ jobs:
         run: go mod download
 
       - name: Format Go Code
+        working-directory: src
         run: go fmt $(go list ./... | grep -v /vendor/)
 
       - name: Run tests with coverage
+        working-directory: src
         run: go test ./... -coverprofile=coverage.out
 
       - name: Build application
+        working-directory: src
         run: go build -v ./...
