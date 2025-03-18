@@ -3,5 +3,18 @@
     "info": {
         "contact": {}
     },
-    "paths": {}
+    "paths": {
+        "/projects/dada": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Display of all projects registered in taiga",
+                "responses": {}
+            }
+        }
+    }
 }

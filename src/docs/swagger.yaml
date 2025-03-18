@@ -1,4 +1,12 @@
 info:
   contact: {}
-paths: {}
+paths:
+  /projects/dada:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      summary: Display of all projects registered in taiga
+      tags:
+      - Projects
 swagger: "2.0"

@@ -2,6 +2,7 @@ package routes
 
 import (
 	_ "inine-track/docs"
+	"inine-track/pkg/controller"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -15,6 +16,11 @@ import (
 // @BasePath /
 func HandlleRequest() {
 	r := gin.Default()
+
+	projects := r.Group("/projects")
+	{
+		projects.GET("/dada", controller.GetProjects)
+	}
 
 	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
