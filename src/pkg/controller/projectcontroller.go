@@ -10,7 +10,7 @@ import (
 // @Descripition This endpoint displays all projects
 // @Tags Projects
 // @Produce json
-// @Router /projects/dada [get]
+// @Router /projects/data [get]
 func GetProjects(c *gin.Context) {
 
 	status, reponse := service.GetProjects()

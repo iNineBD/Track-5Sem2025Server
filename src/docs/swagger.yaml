@@ -1,7 +1,7 @@
 info:
   contact: {}
 paths:
-  /projects/dada:
+  /projects/data:
     get:
       produces:
       - application/json
