@@ -19,7 +19,7 @@ func HandlleRequest() {
 
 	projects := r.Group("/projects")
 	{
-		projects.GET("/dada", controller.GetProjects)
+		projects.GET("/data", controller.GetProjects)
 	}
 
 	// Endpoint Swagger
