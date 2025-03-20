@@ -29,6 +29,14 @@ jobs:
       - name: Clean Go Cache
         run: go clean -cache -modcache -testcache -x
 
+      - name: Ensure go.mod exists and initialize module
+        working-directory: src
+        run: |
+          if [ ! -f go.mod ]; then
+            go mod init inine-track
+          fi
+          go mod tidy
+
       - name: Install Dependencies
         working-directory: src
         run: go mod download
@@ -37,10 +45,6 @@ jobs:
         working-directory: src
         run: go fmt $(go list ./... | grep -v /vendor/)
 
-      - name: Run Go Mod Tidy
-        working-directory: src
-        run: go mod tidy
-
       - name: Run GolangCI-Lint
         working-directory: src
-        run: golangci-lint run ./...      
+        run: golangci-lint run --timeout=5m
