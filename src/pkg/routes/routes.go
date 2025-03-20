@@ -2,6 +2,7 @@ package routes
 
 import (
 	_ "inine-track/docs"
+	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,8 @@ import (
 // @BasePath /
 func HandlleRequest() {
 	r := gin.Default()
+
+	r.Use(config.CorsConfig())
 
 	projects := r.Group("/projects")
 	{
