@@ -26,6 +26,18 @@ const docTemplate = `{
                 "summary": "Display of all projects registered in taiga",
                 "responses": {}
             }
+        },
+        "/statistics/data": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Display of all projects registered in taiga",
+                "responses": {}
+            }
         }
     }
 }`

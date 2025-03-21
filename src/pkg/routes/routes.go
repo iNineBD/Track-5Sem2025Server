@@ -25,6 +25,11 @@ func HandlleRequest() {
 		projects.GET("/data", controller.GetProjects)
 	}
 
+	statistics := r.Group("/statistics")
+	{
+		statistics.GET("/data", controller.GetStatisticsData)
+	}
+
 	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

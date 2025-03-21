@@ -9,4 +9,12 @@ paths:
       summary: Display of all projects registered in taiga
       tags:
       - Projects
+  /statistics/data:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      summary: Display of all projects registered in taiga
+      tags:
+      - Statistics
 swagger: "2.0"
