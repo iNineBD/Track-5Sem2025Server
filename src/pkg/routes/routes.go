@@ -27,7 +27,7 @@ func HandlleRequest() {
 
 	statistics := r.Group("/statistics")
 	{
-		statistics.GET("/data", controller.GetStatisticsData)
+		statistics.GET("/data/:id", controller.GetStatisticsData)
 	}
 
 	// Endpoint Swagger

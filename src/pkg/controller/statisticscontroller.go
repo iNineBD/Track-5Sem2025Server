@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"fmt"
 	"inine-track/pkg/dto/statisticsdto"
 	"inine-track/pkg/service"
-	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,32 +13,35 @@ import (
 // @Summary Display of all projects registered in taiga
 // @Descripition This endpoint displays all projects
 // @Tags Statistics
+// @Param id path string true "Id do projeto para busca"
 // @Produce json
-// @Router /statistics/data [get]
+// @Router /statistics/data/{id} [get]
 func GetStatisticsData(c *gin.Context) {
 
-	var resquest statisticsdto.GetStatisticsRequest
+	var idProject, _ = strconv.Atoi(strings.TrimSpace(c.Param("id")))
 
-	if err := c.ShouldBindBodyWithJSON(&resquest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-
-	status, dataTag := service.GetCardsPerTag(resquest.Id)
+	status, dataTag := service.GetCardsPerTag(idProject)
 
 	if status != 200 {
+		fmt.Println("Aquiiiiii")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por tag"})
+		return
 	}
 
-	status, dataUser := service.GetCardsPerUser(resquest.Id)
+	status, dataUser := service.GetCardsPerUser(idProject)
 
 	if status != 200 {
+		fmt.Println("Aquiiiiii 12222222")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por colaborador"})
+		return
 	}
 
-	status, dataStatus := service.GetCardsPerStatus(resquest.Id)
+	status, dataStatus := service.GetCardsPerStatus(idProject)
 
 	if status != 200 {
+		fmt.Println("Aquiiiiii 333333333")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por tag"})
+		return
 	}
 
 	var response statisticsdto.GetStatisticsResponse = statisticsdto.GetStatisticsResponse{TagData: dataTag, UserData: dataUser, StatusData: dataStatus}
