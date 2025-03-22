@@ -27,7 +27,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/statistics/data": {
+        "/statistics/data/{id}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -36,6 +36,15 @@ const docTemplate = `{
                     "Statistics"
                 ],
                 "summary": "Display of all projects registered in taiga",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id do projeto para busca",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         }
