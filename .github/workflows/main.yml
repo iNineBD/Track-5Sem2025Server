@@ -50,7 +50,7 @@ jobs:
 
       - name: Format Go Code
         working-directory: src
-        run: go fmt $(go list ./... | grep -v /vendor/) -w .
+        run: go fmt $(go list ./... | grep -v /vendor/)
 
       - name: Run GolangCI-Lint
         working-directory: src
