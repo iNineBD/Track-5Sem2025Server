@@ -4,6 +4,7 @@ import (
 	// Import necessário para gerar documentação com Swagger
 	_ "inine-track/docs"
 	"log"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -23,6 +24,4 @@ func HandlleRequest() {
 	if err := r.Run(); err != nil {
 		log.Fatalf("Erro ao iniciar o servidor: %v", err)
 	}
-
-	r.Run()
 }
