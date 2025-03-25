@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"inine-track/pkg/dto/statisticsdto"
 	"inine-track/pkg/service"
 	"strconv"
@@ -23,7 +22,6 @@ func GetStatisticsData(c *gin.Context) {
 	status, dataTag := service.GetCardsPerTag(idProject)
 
 	if status != 200 {
-		fmt.Println("Aquiiiiii")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por tag"})
 		return
 	}
@@ -31,7 +29,6 @@ func GetStatisticsData(c *gin.Context) {
 	status, dataUser := service.GetCardsPerUser(idProject)
 
 	if status != 200 {
-		fmt.Println("Aquiiiiii 12222222")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por colaborador"})
 		return
 	}
@@ -39,7 +36,6 @@ func GetStatisticsData(c *gin.Context) {
 	status, dataStatus := service.GetCardsPerStatus(idProject)
 
 	if status != 200 {
-		fmt.Println("Aquiiiiii 333333333")
 		c.JSON(status, gin.H{"error": "erro ao retornar as cards por tag"})
 		return
 	}
