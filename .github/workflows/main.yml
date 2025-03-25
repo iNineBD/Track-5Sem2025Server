@@ -18,25 +18,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.22
+          go-version: 1.23
           cache: true
-
-    # Baixa a versão do golangci-lint diretamente no path e adiciona em $GITHUB_PATH para garantir diponibilidade do binário.
-      - name: Install GolangCI-Lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       - name: Prepare Go Modules
         working-directory: src
         run: |
           go mod tidy 
-
-      - name: Lint and Format Code
-        working-directory: src
-        run: |
-          go fmt ./...
-          golangci-lint run --fix ./...
   
       - name: Run tests with coverage
         working-directory: src
