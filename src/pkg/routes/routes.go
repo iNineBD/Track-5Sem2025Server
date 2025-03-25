@@ -1,9 +1,11 @@
 package routes
 
 import (
+	// Import necessário para gerar documentação com Swagger
 	_ "inine-track/docs"
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
+
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -32,6 +34,7 @@ func HandlleRequest() {
 
 	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+  
+  r.Run()
 
-	r.Run()
 }
