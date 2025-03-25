@@ -12,9 +12,21 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() (err error) {
-	err = godotenv.Load()
-	if err != nil {
-		return fmt.Errorf("erro ao carregar o arquivo .env : %s", err.Error())
+
+	paths := []string{".env", "../../.env"}
+	var loadErr error
+
+	for _, path := range paths {
+		if err := godotenv.Load(path); err == nil {
+			loadErr = nil
+			break
+		} else {
+			loadErr = err
+		}
+	}
+
+	if loadErr != nil {
+		return fmt.Errorf("erro ao carregar o arquivo .env : %s", loadErr.Error())
 	}
 
 	// Obter as variáveis de ambiente
