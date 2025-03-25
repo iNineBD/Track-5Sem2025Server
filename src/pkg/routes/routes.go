@@ -1,9 +1,12 @@
 package routes
 
 import (
+	// Import necessário para gerar documentação com Swagger
 	_ "inine-track/docs"
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
+
+	"log"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,5 +36,7 @@ func HandlleRequest() {
 	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Run()
+	if err := r.Run(); err != nil {
+		log.Fatalf("Erro ao iniciar o servidor: %v", err)
+	}
 }
