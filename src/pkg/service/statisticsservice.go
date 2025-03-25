@@ -7,30 +7,50 @@ import (
 	"net/http"
 )
 
-func GetCardsPerTag(idProject int) (int, []statisticsdto.TagData) {
+func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.TagData) {
 
-	var listCardsPerTag []statisticsdto.TagData
+	var dimProject models.DimProject
 
-	result := database.DB.Raw(`select tag.name, sum(fato.qtd_card) as qtd_card_tag from dw_track.fato_card fato
-	inner join dw_track.dim_tag tag on tag.id = fato.fk_id_tag where fato.fk_id_project = ?
-	group by tag.name;`, idProject).Scan(&listCardsPerTag)
+	result := database.DB.Where("id = ?", idProject).First(&dimProject)
 
 	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	result = database.DB.Raw(`select tag.name, sum(fato.qtd_card) as qtd_card_tag from dw_track.fato_card fato
+	inner join dw_track.dim_tag tag on tag.id = fato.fk_id_tag where fato.fk_id_project = ?
+	group by tag.name;`, idProject)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	if err := result.Scan(&listCardsPerTag).Error; err != nil {
 		return http.StatusBadRequest, nil
 	}
 
 	return http.StatusOK, listCardsPerTag
 }
 
-func GetCardsPerUser(idProject int) (int, []statisticsdto.UserData) {
+func GetCardsPerUser(idProject int) (status int, listCardsPerUser []statisticsdto.UserData) {
 
-	var listCardsPerUser []statisticsdto.UserData
+	var dimProject models.DimProject
 
-	result := database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
-	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_id_project = ?
-	group by colaborador.full_name;`, idProject).Scan(&listCardsPerUser)
+	result := database.DB.Where("id = ?", idProject).First(&dimProject)
 
 	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	result = database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
+	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_id_project = ?
+	group by colaborador.full_name;`, idProject)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	if err := result.Scan(&listCardsPerUser).Error; err != nil {
 		return http.StatusBadRequest, nil
 	}
 
