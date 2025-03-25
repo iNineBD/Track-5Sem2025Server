@@ -3,6 +3,7 @@ package service
 import (
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
+	"inine-track/pkg/models"
 	"net/http"
 )
 
@@ -36,15 +37,25 @@ func GetCardsPerUser(idProject int) (int, []statisticsdto.UserData) {
 	return http.StatusOK, listCardsPerUser
 }
 
-func GetCardsPerStatus(idProject int) (int, []statisticsdto.StatusData) {
+func GetCardsPerStatus(idProject int) (status int, listCardsPerStatus []statisticsdto.StatusData) {
 
-	var listCardsPerStatus []statisticsdto.StatusData
+	var dimProject models.DimProject
 
-	result := database.DB.Raw(`select status.name, sum(fato.qtd_card) as qtd_card_status from dw_track.fato_card fato
-	inner join dw_track.dim_status status on status.id = fato.fk_id_status where fato.fk_id_project = ?
-	group by status.name;`, idProject).Scan(&listCardsPerStatus)
+	result := database.DB.Where("id = ?", idProject).First(&dimProject)
 
 	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	result = database.DB.Raw(`select status.name, sum(fato.qtd_card) as qtd_card_status from dw_track.fato_card fato
+	inner join dw_track.dim_status status on status.id = fato.fk_id_status where fato.fk_id_project = ?
+	group by status.name;`, idProject)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, nil
+	}
+
+	if err := result.Scan(&listCardsPerStatus).Error; err != nil {
 		return http.StatusBadRequest, nil
 	}
 
