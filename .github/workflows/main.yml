@@ -54,7 +54,7 @@ jobs:
 
       - name: Run GolangCI-Lint (Check & Fix)
         working-directory: src
-        run: golangci-lint run --fix $(go list ./...)
+        run: golangci-lint run --fix --path-prefix $(pwd)
 
       - name: Run tests with coverage
         working-directory: src
