@@ -26,15 +26,15 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
+      - name: Clean Go Cache
+        run: go clean -cache -modcache -testcache -x
+        
       - name: Cache Go Modules
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: go-mod-${{ hashFiles('src/go.sum') }}
           restore-keys: go-mod-
-
-      - name: Clean Go Cache
-        run: go clean -cache -modcache -testcache -x
 
       - name: Ensure go.mod exists and initialize module
         working-directory: src
