@@ -40,10 +40,13 @@ jobs:
         working-directory: src
         run: go build -v ./...
 
-      - name: Load .env file
-        uses: motdotla/dotenv-action@v1
-        with:
-          path: src/.env
+      - name: Create .env for test
+        working-directory: src
+        run: |
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_USER=test" >> .env
+          echo "DB_PASS=test" >> .env
+          echo "DB_NAME=testdb" >> .env
       
   sonarqube-analysis:
     name: SonarQube Analysis
