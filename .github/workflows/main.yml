@@ -39,6 +39,11 @@ jobs:
       - name: Build application
         working-directory: src
         run: go build -v ./...
+
+      - name: Load .env file
+        uses: motdotla/dotenv-action@v1
+        with:
+          path: src/.env
       
   sonarqube-analysis:
     name: SonarQube Analysis
