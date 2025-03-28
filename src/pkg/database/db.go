@@ -13,7 +13,7 @@ var DB *gorm.DB
 
 func ConnectDB() (err error) {
 
-	paths := []string{".env", "../../.env"}
+	paths := []string{".env", "../../.env", "src/.env", "../.env"}
 	var loadErr error
 
 	for _, path := range paths {
