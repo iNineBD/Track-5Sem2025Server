@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -21,10 +23,28 @@ jobs:
           go-version: 1.23
           cache: true
 
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: go-mod-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: go-mod-${{ runner.os }}-
+  
       - name: Prepare Go Modules
         working-directory: src
+        run: go mod tidy
+      
+      - name: Verify go.sum exists
+        working-directory: src
+        run: ls -la
+      
+      - name: Create .env for test
+        working-directory: src
         run: |
-          go mod tidy 
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_USER=test" >> .env
+          echo "DB_PASS=test" >> .env
+          echo "DB_NAME=testdb" >> .env
   
       - name: Run tests with coverage
         working-directory: src
@@ -39,14 +59,6 @@ jobs:
       - name: Build application
         working-directory: src
         run: go build -v ./...
-
-      - name: Create .env for test
-        working-directory: src
-        run: |
-          echo "DB_HOST=localhost" >> .env
-          echo "DB_USER=test" >> .env
-          echo "DB_PASS=test" >> .env
-          echo "DB_NAME=testdb" >> .env
       
   sonarqube-analysis:
     name: SonarQube Analysis
