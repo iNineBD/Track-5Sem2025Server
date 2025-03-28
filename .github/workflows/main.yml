@@ -10,38 +10,44 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: 1.23
-        
-      - name: Create .env file
+          cache: true
+
+      - name: Create .env for test
         working-directory: src
         run: |
-          echo "DB_USER=test" > .env
-          echo "DB_PASSWORD=test" >> .env
-          echo "DB_HOST=localhost" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "DB_NAME=testdb" >> .env
-          echo "DB_SCHEMA=public" >> .env
+              echo "DB_HOST=localhost" >> .env
+              echo "DB_USER=test" >> .env
+              echo "DB_PASS=test" >> .env
+              echo "DB_NAME=testdb" >> .env
+              echo "DB_PORT=5432" >> .env
   
-      - name: Download Go dependencies
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: go-mod-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: go-mod-${{ runner.os }}-
+  
+      - name: Prepare Go Modules
         working-directory: src
-        run: go mod download
+        run: go mod tidy
+      
+      - name: Verify go.sum exists
+        working-directory: src
+        run: ls -la
+      
   
       - name: Run tests with coverage
         working-directory: src
@@ -61,7 +67,6 @@ jobs:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
     needs: build-and-test  # Só roda se a job 'build-and-test' for bem-sucedida
-    if: github.ref == 'refs/heads/main'  # Executa apenas na branch main
 
     steps:
       - name: Checkout repository
