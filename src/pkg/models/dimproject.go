@@ -8,9 +8,6 @@ type DimProject struct {
 	Name         string    `json:"name"`
 	CreatedDate  time.Time `json:"created_date"`
 	ModifiedDate time.Time `json:"modified_date"`
-	FinishDate   time.Time `json:"finish_date"`
-	LogoBigUrl   string    `json:"logo_big_url"`
-	LogoSmallUrl string    `json:"logo_small_url"`
 }
 
 func (DimProject) TableName() string {
