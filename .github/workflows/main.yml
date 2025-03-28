@@ -45,6 +45,7 @@ jobs:
           echo "DB_USER=test" >> .env
           echo "DB_PASS=test" >> .env
           echo "DB_NAME=testdb" >> .env
+          echo "DB_PORT=5432" >> .env
   
       - name: Run tests with coverage
         working-directory: src
