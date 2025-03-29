@@ -80,6 +80,7 @@ jobs:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
     needs: build-and-test  # Só roda se a job 'build-and-test' for bem-sucedida
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'  # Condição para rodar apenas em PRs para 'main'
 
     steps:
       - name: Checkout repository
