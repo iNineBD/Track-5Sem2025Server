@@ -14,7 +14,7 @@ func TestGetCardsPerStatus(t *testing.T) {
 	}
 
 	type args struct {
-		idProject int
+		IDProject int
 	}
 	tests := []struct {
 		name       string
@@ -38,7 +38,7 @@ func TestGetCardsPerStatus(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			gotStatus, _ := GetCardsPerStatus(tt.args.idProject)
+			gotStatus, _ := GetCardsPerStatus(tt.args.IDProject)
 
 			// Verifica o status retornado
 			if gotStatus != tt.wantStatus {
@@ -58,7 +58,7 @@ func TestGetCardsPerUser(t *testing.T) {
 	}
 
 	type args struct {
-		idProject int
+		IDProject int
 	}
 	tests := []struct {
 		name       string
@@ -82,7 +82,7 @@ func TestGetCardsPerUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerUser(tt.args.idProject)
+			gotStatus, _ := GetCardsPerUser(tt.args.IDProject)
 			if gotStatus != tt.wantStatus {
 				t.Errorf("GetCardsPerUser() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}
@@ -98,7 +98,7 @@ func TestGetCardsPerTag(t *testing.T) {
 		log.Fatal(err.Error())
 	}
 	type args struct {
-		idProject int
+		IDProject int
 	}
 	tests := []struct {
 		name       string
@@ -122,7 +122,7 @@ func TestGetCardsPerTag(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerTag(tt.args.idProject)
+			gotStatus, _ := GetCardsPerTag(tt.args.IDProject)
 			if gotStatus != tt.wantStatus {
 				t.Errorf("GetCardsPerTag() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}

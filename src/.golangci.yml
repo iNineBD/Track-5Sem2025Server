@@ -9,6 +9,12 @@ linters:
     - revive
     - gofmt
     - gocyclo
+    - gosimple #Atribuido regras do linter.
+    - ineffassign
+    - unused
+  #disable:  - deadcode
+  #disable:  - structcheck
+  #disable:  - varcheck
 
 issues:
   max-issues-per-linter: 10

@@ -1,7 +1,7 @@
 package models
 
 type DimTag struct {
-	Id    int64  `json:"id" gorm:"primryKey;autoIncrement"`
+	ID    int64  `json:"id" gorm:"primryKey;autoIncrement"`
 	Name  string `json:"name"`
 	Color string `json:"color"`
 }
