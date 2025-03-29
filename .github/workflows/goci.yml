@@ -32,5 +32,10 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.8
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
+      - name: Ensure Go Modules #Avaliar se os módulos do GO estão configurados corretamente.
+        working-directory: src
+        run: go mod tidy #Irá baixar as dependências.
+
       - name: Run GolangCI-Lint
+        working-directory: src
         run: golangci-lint run ./...
