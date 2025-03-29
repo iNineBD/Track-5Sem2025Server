@@ -3,21 +3,19 @@ package service
 import (
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
-	"inine-track/pkg/models"
+	"inine-track/pkg/service/utils"
 	"net/http"
 )
 
 func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.TagData) {
 
-	var dimProject models.DimProject
+	err := utils.GetProject(int64(idProject))
 
-	result := database.DB.Where("id = ?", idProject).First(&dimProject)
-
-	if result.Error != nil {
+	if err != nil {
 		return http.StatusBadRequest, nil
 	}
 
-	result = database.DB.Raw(`select tag.name, sum(fato.qtd_card) as qtd_card_tag from dw_track.fato_card fato
+	result := database.DB.Raw(`select tag.name, sum(fato.qtd_card) as qtd_card_tag from dw_track.fato_card fato
 	inner join dw_track.dim_tag tag on tag.id = fato.fk_id_tag where fato.fk_id_project = ?
 	group by tag.name;`, idProject)
 
@@ -34,15 +32,13 @@ func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.
 
 func GetCardsPerUser(idProject int) (status int, listCardsPerUser []statisticsdto.UserData) {
 
-	var dimProject models.DimProject
+	err := utils.GetProject(int64(idProject))
 
-	result := database.DB.Where("id = ?", idProject).First(&dimProject)
-
-	if result.Error != nil {
+	if err != nil {
 		return http.StatusBadRequest, nil
 	}
 
-	result = database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
+	result := database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
 	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_id_project = ?
 	group by colaborador.full_name;`, idProject)
 
@@ -59,15 +55,13 @@ func GetCardsPerUser(idProject int) (status int, listCardsPerUser []statisticsdt
 
 func GetCardsPerStatus(idProject int) (status int, listCardsPerStatus []statisticsdto.StatusData) {
 
-	var dimProject models.DimProject
+	err := utils.GetProject(int64(idProject))
 
-	result := database.DB.Where("id = ?", idProject).First(&dimProject)
-
-	if result.Error != nil {
+	if err != nil {
 		return http.StatusBadRequest, nil
 	}
 
-	result = database.DB.Raw(`select status.name, sum(fato.qtd_card) as qtd_card_status from dw_track.fato_card fato
+	result := database.DB.Raw(`select status.name, sum(fato.qtd_card) as qtd_card_status from dw_track.fato_card fato
 	inner join dw_track.dim_status status on status.id = fato.fk_id_status where fato.fk_id_project = ?
 	group by status.name;`, idProject)
 
