@@ -33,6 +33,13 @@ jobs:
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../.env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../.env
           echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../.env
+
+
+      - name: Verify .env file (debug)
+        working-directory: src
+        run: |
+          ls -la ../
+          cat ../.env
   
       - name: Run tests with coverage
         working-directory: src
