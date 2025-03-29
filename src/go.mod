@@ -3,6 +3,7 @@ module inine-track
 go 1.23.4
 
 require (
+	github.com/gin-contrib/cors v1.7.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/files v1.0.1

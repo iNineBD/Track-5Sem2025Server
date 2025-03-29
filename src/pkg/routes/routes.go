@@ -3,6 +3,9 @@ package routes
 import (
 	// Import necessário para gerar documentação com Swagger
 	_ "inine-track/docs"
+	"inine-track/pkg/config"
+	"inine-track/pkg/controller"
+
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +20,18 @@ import (
 // @BasePath /
 func HandlleRequest() {
 	r := gin.Default()
+
+	r.Use(config.CorsConfig())
+
+	projects := r.Group("/projects")
+	{
+		projects.GET("/data", controller.GetProjects)
+	}
+
+	statistics := r.Group("/statistics")
+	{
+		statistics.GET("/data/:id", controller.GetStatisticsData)
+	}
 
 	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
