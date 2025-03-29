@@ -24,15 +24,18 @@ jobs:
         working-directory: src
         run: go mod download
   
+      - name: Create .env file
+        working-directory: src
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > ../../.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ../../.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ../../.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../../.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../../.env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../../.env
+  
       - name: Run tests with coverage
         working-directory: src
-        env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_SCHEMA: ${{ secrets.DB_SCHEMA }}
         run: go test ./... -coverprofile=coverage.out -covermode=atomic
   
       - name: Upload coverage report
