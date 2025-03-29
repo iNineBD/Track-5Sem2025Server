@@ -19,11 +19,23 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.23
-  
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download Go dependencies
         working-directory: src
-        run: go mod download
-  
+        run: |
+          if [ ! -f go.sum ]; then
+            go mod tidy
+          fi
+          go mod download
+
       - name: Create .env file
         working-directory: src
         run: |
@@ -44,23 +56,22 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> .env
 
-
       - name: Verify .env file (debug)
         working-directory: src
         run: |
           ls -la ../
           cat ../.env
-  
+
       - name: Run tests with coverage
         working-directory: src
         run: go test ./... -coverprofile=coverage.out -covermode=atomic
-  
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: src/coverage.out
-  
+
       - name: Build application
         working-directory: src
         run: go build -v ./...
