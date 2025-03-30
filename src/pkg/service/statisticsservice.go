@@ -7,17 +7,16 @@ import (
 	"net/http"
 )
 
-func GetCardsPerTag(IDProject int) (status int, listCardsPerTag []statisticsdto.TagData) {
+func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.TagData) {
 
-	err := utils.GetProject(int64(IDProject))
+	err := utils.GetProject(int64(idProject))
 
 	if err != nil {
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select tag.name, sum(fato.qtd_card) as qtd_card_tag from dw_track.fato_card fato
-	inner join dw_track.dim_tag tag on tag.id = fato.fk_id_tag where fato.fk_id_project = ?
-	group by tag.name;`, IDProject)
+	result := database.DB.Raw(`select tag.name, count(tag.id_card) as qtd_card_tag from dw_track.dim_tag tag
+	where tag.id_project = ? group by tag.name;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
@@ -53,17 +52,16 @@ func GetCardsPerUser(IDProject int) (status int, listCardsPerUser []statisticsdt
 	return http.StatusOK, listCardsPerUser
 }
 
-func GetCardsPerStatus(IDProject int) (status int, listCardsPerStatus []statisticsdto.StatusData) {
+func GetCardsPerStatus(idProject int) (status int, listCardsPerStatus []statisticsdto.StatusData) {
 
-	err := utils.GetProject(int64(IDProject))
+	err := utils.GetProject(int64(idProject))
 
 	if err != nil {
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select status.name, sum(fato.qtd_card) as qtd_card_status from dw_track.fato_card fato
-	inner join dw_track.dim_status status on status.id = fato.fk_id_status where fato.fk_id_project = ?
-	group by status.name;`, IDProject)
+	result := database.DB.Raw(`select status.name, count(status.id_card) as qtd_card_status from dw_track.dim_status status
+	where status.id_project = ? group by status.name;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
