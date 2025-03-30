@@ -15,8 +15,8 @@ func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select tag.name, count(tag.id_card) as qtd_card_tag from dw_track.dim_tag tag
-	where tag.id_project = ? group by tag.name;`, idProject)
+	result := database.DB.Raw(`select tag.name, count(tag.idCard) as qtd_card_tag from dw_track.dim_tag tag
+	where tag.idProject = ? group by tag.name;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
@@ -38,7 +38,7 @@ func GetCardsPerUser(IDProject int) (status int, listCardsPerUser []statisticsdt
 	}
 
 	result := database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
-	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_id_project = ?
+	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_idProject = ?
 	group by colaborador.full_name;`, IDProject)
 
 	if result.Error != nil {
@@ -60,8 +60,8 @@ func GetCardsPerStatus(idProject int) (status int, listCardsPerStatus []statisti
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select status.name, count(status.id_card) as qtd_card_status from dw_track.dim_status status
-	where status.id_project = ? group by status.name;`, idProject)
+	result := database.DB.Raw(`select status.name, count(status.idard) as qtd_card_status from dw_track.dim_status status
+	where status.idProject = ? group by status.name;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
