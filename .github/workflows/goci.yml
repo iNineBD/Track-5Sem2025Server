@@ -9,6 +9,9 @@ on:
       - 'release/**'
   pull_request:
     branches:
+      - 'sprint-1'
+      - 'sprint-2'
+      - 'sprint-3'
       
 jobs:
   lint:
