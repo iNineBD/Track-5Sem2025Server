@@ -20,9 +20,8 @@ func ConnectDB() (err error) {
 		if err := godotenv.Load(path); err == nil {
 			loadErr = nil
 			break
-		} else {
-			loadErr = err
-		}
+		} //havia um else desnecessário.
+		loadErr = err
 	}
 
 	if loadErr != nil {
