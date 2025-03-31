@@ -24,7 +24,7 @@ func TestGetCardsPerStatus(t *testing.T) {
 		{
 			name: "VALID",
 			args: args{
-				1,
+				4,
 			},
 			wantStatus: 200,
 		}, {
@@ -69,7 +69,7 @@ func TestGetCardsPerUser(t *testing.T) {
 		{
 			name: "VALID",
 			args: args{
-				1,
+				4,
 			},
 			wantStatus: 200,
 		}, {
@@ -109,7 +109,7 @@ func TestGetCardsPerTag(t *testing.T) {
 		{
 			name: "VALID",
 			args: args{
-				1,
+				4,
 			},
 			wantStatus: 200,
 		}, {
