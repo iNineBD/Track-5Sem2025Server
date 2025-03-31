@@ -1,0 +1,106 @@
+name: Go Build, Test and SonarCloud Analysis
+
+on:
+  push:
+    branches: [main, sprint-1, sprint-2, sprint-3]
+  pull_request:
+    branches: [main, sprint-1, sprint-2, sprint-3]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.23
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies
+        working-directory: src
+        run: |
+          if [ ! -f go.sum ]; then
+            go mod tidy
+          fi
+          go mod download
+
+      - name: Create .env file
+        working-directory: src
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > ../.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ../.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ../.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../.env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../.env
+
+      - name: Create .env file in service
+        working-directory: src/pkg/service
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> .env
+
+      - name: Verify .env file (debug)
+        working-directory: src
+        run: |
+          ls -la ../
+          cat ../.env
+
+      - name: Run tests with coverage
+        working-directory: src
+        run: go test ./... -coverprofile=coverage.out -covermode=atomic
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: src/coverage.out
+
+      - name: Build application
+        working-directory: src
+        run: go build -v ./...
+      
+  sonarqube-analysis:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+    needs: build-and-test  # Só roda se a job 'build-and-test' for bem-sucedida
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'  # Condição para rodar apenas em PRs para 'main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Necessário para o SonarQube analisar corretamente o histórico do código
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: src
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectBaseDir=src
+            -Dsonar.go.coverage.reportPaths=coverage.out

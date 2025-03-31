@@ -1,0 +1,21 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - revive
+    - gofmt
+    - gocyclo
+    - gosimple #Atribuido regras do linter.
+    - ineffassign
+    - unused
+  #disable:  - deadcode
+  #disable:  - structcheck
+  #disable:  - varcheck
+
+issues:
+  max-issues-per-linter: 10
+  max-same-issues: 5
