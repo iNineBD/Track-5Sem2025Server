@@ -36,4 +36,4 @@ Descreva de forma objetiva as alterações realizadas neste PR.
 
 ## 👀 SCREENSHOTS OR EVIDENCE (IF NEEDED):
 
-<coloque aqui prints, logs, ou gifs de testes>
+<coloque aqui alguns prints, logs, ou gifs de testes>
