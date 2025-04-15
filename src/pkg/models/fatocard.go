@@ -1,13 +1,24 @@
 package models
 
 type FatoCard struct {
-	IDStatus   int64      `json:"id_status"`
-	DimStatus  DimStatus  `gorm:"foreignKey;IdStatus;references:Id"`
-	IDTag      int64      `json:"id_tag"`
-	DimTag     DimTag     `gorm:"foreignKey;IdTag;references:Id"`
-	IDUser     int64      `json:"id_user"`
-	DimUser    DimUser    `gorm:"foreignKey;IdUser;references:Id"`
-	IDProject  int64      `json:"id_project"`
-	DimProject DimProject `gorm:"foreignKey;IdProject;references:Id"`
-	QtdCard    int64      `json:"qtd_card"`
+	IDFatoCard     int64      `json:"id_fato_card" gorm:"primaryKey;autoIncrement"`
+	IDCard         int64      `json:"id_card"`
+	DimCard        DimCard    `gorm:"foreignKey;IDCard;references:IDCard"`
+	IDProject      int64      `json:"id_project"`
+	DimProject     DimProject `gorm:"foreignKey;IDProject;references:IDProject"`
+	IDUser         int64      `json:"id_user"`
+	DimUser        DimUser    `gorm:"foreignKey;IDUser;references:IDUser"`
+	IDStatus       int64      `json:"id_status"`
+	DimStatus      DimStatus  `gorm:"foreignKey;IDStatus;references:IDStatus"`
+	IDTimeCreated  int64      `json:"id_time_created"`
+	DimTimeCreated DimTime    `gorm:"foreignKey;IDTimeCreated;references:IDTime"`
+	IDTimeFinish   int64      `json:"id_time_finish"`
+	DimTimeFinish  DimTime    `gorm:"foreignKey;IDTimeFinish;references:IDTime"`
+	IDTag          int64      `json:"id_tag"`
+	DimTag         DimTag     `gorm:"foreignKey;IDTag;references:IDTag"`
+	Qtd_cards      int64      `json:"qtd_card"`
+}
+
+func (FatoCard) TableName() string {
+	return "fato_cards"
 }

@@ -1,8 +1,8 @@
 package models
 
 type DimRole struct {
-	ID   int64  `json:"id" gorm:"primaryKey;autoIncrement"`
-	Name string `json:"name"`
+	IDRole   int64  `json:"id_role" gorm:"primaryKey;autoIncrement"`
+	NameRole string `json:"name_role"`
 }
 
 func (DimRole) TableName() string {
