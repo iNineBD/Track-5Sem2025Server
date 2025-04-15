@@ -24,8 +24,7 @@ func GetProjects() (int, gin.H) {
 	}
 
 	for _, p := range projects {
-		var project projectdto.GetProjectsResponse = projectdto.GetProjectsResponse{ID: p.ID, Name: p.Name, Description: p.Description,
-			CreatedDate: p.CreatedDate, ModifiedDate: p.ModifiedDate}
+		var project projectdto.GetProjectsResponse = projectdto.GetProjectsResponse{ID: p.IDProject, Name: p.NameProject, Description: p.Description}
 		listProjects = append(listProjects, project)
 	}
 
