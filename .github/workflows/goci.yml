@@ -7,6 +7,7 @@ on:
       - 'feature/**'
       - 'hotfix/**'
       - 'release/**'
+      
   pull_request:
     branches:
       - 'sprint-1'
@@ -26,16 +27,31 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.4'
+          cache: false # Desabilita o cache interno do setup-go (vamos usar manual)
+
+      - name: Cache Go Modules # Cache para as dependências do Go, para evitar downloads desnecessários.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
 
       - name: Install GolangCI-Lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.8
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
+      - name: Format code with gofmt # Formatação do código antes da validação e correção automática.
+        working-directory: src
+        run: go fmt ./...
+
       - name: Ensure Go Modules #Avaliar se os módulos do GO estão configurados corretamente.
         working-directory: src
-        run: go mod tidy #Irá baixar as dependências.
+        run: go mod tidy -v # Irá baixar as dependências.
 
-      - name: Run GolangCI-Lint
+      - name: Run GolangCI-Lint # Execução do comando para avaliar as formatações e convenções do código.
         working-directory: src
         run: golangci-lint run ./...
