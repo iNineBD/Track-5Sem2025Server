@@ -1,7 +1,7 @@
 package models
 
 type DimTime struct {
-	IDTime    int64     `json:"id_time"`
+	IDTime    int64     `json:"id_time" gorm:"primaryKey;autoIncrement"`
 	IDDay     int64     `json:"id_day"`
 	DimDay    DimDay    `gorm:"foreignKey;IDDay;references:IDDay"`
 	IDMonth   int64     `json:"id_month"`
