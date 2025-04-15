@@ -1,7 +1,7 @@
 package models
 
 type DimMonth struct {
-	IDMonth int64 `json:"id_month"`
+	IDMonth int64 `json:"id_month" gorm:"primaryKey;autoIncrement"`
 	Month   int64 `json:"month"`
 }
 
