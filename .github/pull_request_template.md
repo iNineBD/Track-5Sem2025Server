@@ -1,16 +1,16 @@
-## 📌 PR DESCRIPTION:
+## PR DESCRIPTION:
 
-Descreva de forma objetiva as alterações realizadas neste PR.
-
-
-## 🔗 JIRA LINK:
-
-- Jira: [TKR-XX](https://seu-jira.com/browse/TKR-XX)
+Describe the changes made in this PR in a concise way.
 
 
-## 📖 WHAT WAS DONE OR CHANGED:
+## JIRA LINK:
 
-- Descreva brevemente as ações alteradas ou construídas
+- Jira: [TKR-XX](https://your-jira.com/browse/TKR-XX)
+
+
+## WHAT WAS DONE OR CHANGED:
+
+- Briefly describe the actions that were changed or built
 - item 1
     - item a
 - item 2
@@ -18,22 +18,22 @@ Descreva de forma objetiva as alterações realizadas neste PR.
     - item b
 
 
-## 🧪 HOW TO TEST:
+## HOW TO TEST:
 
-1. Passo a passo para validar a feature ou correção
-2. Comandos relevantes (ex: `go run main.go`, `golangci-lint run ./...`)
-3. Outras dependências/testes manuais
-
-
-## ✅ CHECKLIST:
-
-- [ ] O código compila sem erros
-- [ ] Os testes (se houver) passam
-- [ ] Linter/GitHub Actions passaram
-- [ ] Revisado localmente
-- [ ] Cobertura de testes mantida ou aumentada
+1. Step-by-step guide to validate the feature or fix
+2. Relevant commands (e.g., `go run main.go`, `golangci-lint run ./...`)
+3. Other dependencies/manual tests
 
 
-## 👀 SCREENSHOTS OR EVIDENCE (IF NEEDED):
+## CHECKLIST:
 
-<coloque aqui alguns prints, logs, ou gifs de testes>
+- [ ] The code compiles without errors
+- [ ] Tests (if any) pass
+- [ ] Linter/GitHub Actions passed
+- [ ] Reviewed locally
+- [ ] Test coverage maintained or increased
+
+
+## SCREENSHOTS OR EVIDENCE (IF NEEDED):
+
+<add here some screenshots, logs, or test gifs>
