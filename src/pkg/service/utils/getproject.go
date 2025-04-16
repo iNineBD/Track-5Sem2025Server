@@ -9,7 +9,7 @@ func GetProject(idProject int64) (err error) {
 
 	var project models.DimProject
 
-	result := database.DB.Where("id = ?", idProject).First(&project)
+	result := database.DB.Where("id_project = ?", idProject).First(&project)
 
 	if result.Error != nil {
 		return result.Error
