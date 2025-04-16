@@ -16,7 +16,7 @@ type FatoCard struct {
 	DimTimeFinish  DimTime    `gorm:"foreignKey;IDTimeFinish;references:IDTime"`
 	IDTag          int64      `json:"id_tag"`
 	DimTag         DimTag     `gorm:"foreignKey;IDTag;references:IDTag"`
-	Qtd_cards      int64      `json:"qtd_card"`
+	Qtdcards       int64      `json:"qtd_card"`
 }
 
 func (FatoCard) TableName() string {
