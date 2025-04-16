@@ -15,8 +15,9 @@ func GetCardsPerTag(idProject int) (status int, listCardsPerTag []statisticsdto.
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select tag.name, count(tag.id_card) as qtd_card_tag from dw_track.dim_tag tag
-	where tag.id_project = ? group by tag.name;`, idProject)
+	result := database.DB.Raw(`select tag.name_tag, sum(fato.qtd_cards) as qtd_card_tag from dw_track_develop.fato_cards fato
+	inner join dw_track_develop.dim_tag tag on tag.id_tag = fato.id_tag where fato.id_project = ?
+	group by tag.name_tag;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
@@ -37,9 +38,9 @@ func GetCardsPerUser(IDProject int) (status int, listCardsPerUser []statisticsdt
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select colaborador.full_name, sum(fato.qtd_card) as qtd_card_user from dw_track.fato_card fato
-	inner join dw_track.dim_user colaborador on colaborador.id = fato.fk_id_user where fato.fk_id_project = ?
-	group by colaborador.full_name;`, IDProject)
+	result := database.DB.Raw(`select colaborador.name_user, sum(fato.qtd_cards) as qtd_card_user from dw_track_develop.fato_cards fato
+	inner join dw_track_develop.dim_user colaborador on colaborador.id_user = fato.id_user where fato.id_project = ?
+	group by colaborador.name_user;`, IDProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
@@ -60,8 +61,9 @@ func GetCardsPerStatus(idProject int) (status int, listCardsPerStatus []statisti
 		return http.StatusBadRequest, nil
 	}
 
-	result := database.DB.Raw(`select status.name, count(status.id_card) as qtd_card_status from dw_track.dim_status status
-	where status.id_project = ? group by status.name;`, idProject)
+	result := database.DB.Raw(`select status.name_status, sum(fato.qtd_cards) as qtd_card_status from dw_track_develop.fato_cards fato
+	inner join dw_track_develop.dim_status status on status.id_status = fato.id_status where fato.id_project = ?
+	group by status.name_status;`, idProject)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, nil
