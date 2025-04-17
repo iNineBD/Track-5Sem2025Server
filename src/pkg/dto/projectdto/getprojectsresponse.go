@@ -1,11 +1,7 @@
 package projectdto
 
-import "time"
-
 type GetProjectsResponse struct {
-	ID           int64     `json:"id"`
-	Name         string    `json:"name"`
-	Description  string    `json:"description"`
-	CreatedDate  time.Time `json:"created_date"`
-	ModifiedDate time.Time `json:"modified_date"`
+	ID          int64  `json:"id_project"`
+	Name        string `json:"name_project"`
+	Description string `json:"description"`
 }

@@ -13,6 +13,7 @@ var DB *gorm.DB
 
 func ConnectDB() (err error) {
 
+	// paths := []string{".env.development", "../../.env.development", "src/.env.development", "../.env.development"}
 	paths := []string{".env", "../../.env", "src/.env", "../.env"}
 	var loadErr error
 
