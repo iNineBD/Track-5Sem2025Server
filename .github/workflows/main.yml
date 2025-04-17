@@ -1,10 +1,18 @@
-name: Go Build and Tests
+name: Build, Test and SonarCloud Analysis
 
 on:
   push:
-    branches: [main, sprint-1, sprint-2, sprint-3]
+    branches:
+      - 'feature/**'
+      - 'fix/**'
+      - 'hotfix/**'
+      - 'release/**'
   pull_request:
-    branches: [main, sprint-1, sprint-2, sprint-3]
+    branches:
+      - main
+      - sprint-1
+      - sprint-2
+      - sprint-3
 
 jobs:
   build-and-test:
@@ -77,3 +85,35 @@ jobs:
       - name: Build application
         working-directory: src
         run: go build -v ./...
+
+        # Chamada do código para consumir o coverage.out para o sonacarcloud, apenas para PRs.
+  sonarcloud-analysis:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.23
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: src
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectBaseDir=src
+            -Dsonar.go.coverage.reportPaths=coverage.out
