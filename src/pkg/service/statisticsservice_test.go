@@ -15,7 +15,10 @@ func TestGetCardsPerStatus(t *testing.T) {
 
 	type args struct {
 		IDProject int
+		Data1     string
+		Data2     string
 	}
+
 	tests := []struct {
 		name       string
 		args       args
@@ -25,12 +28,16 @@ func TestGetCardsPerStatus(t *testing.T) {
 			name: "VALID",
 			args: args{
 				1,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 200,
 		}, {
 			name: "INVALID",
 			args: args{
 				999999999,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 400,
 		},
@@ -38,7 +45,7 @@ func TestGetCardsPerStatus(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			gotStatus, _ := GetCardsPerStatus(tt.args.IDProject)
+			gotStatus, _ := GetCardsPerStatus(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
 
 			// Verifica o status retornado
 			if gotStatus != tt.wantStatus {
@@ -59,6 +66,8 @@ func TestGetCardsPerUser(t *testing.T) {
 
 	type args struct {
 		IDProject int
+		Data1     string
+		Data2     string
 	}
 	tests := []struct {
 		name       string
@@ -70,19 +79,23 @@ func TestGetCardsPerUser(t *testing.T) {
 			name: "VALID",
 			args: args{
 				1,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 200,
 		}, {
 			name: "INVALID",
 			args: args{
 				999999999,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 400,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerUser(tt.args.IDProject)
+			gotStatus, _ := GetCardsPerUser(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
 			if gotStatus != tt.wantStatus {
 				t.Errorf("GetCardsPerUser() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}
@@ -99,6 +112,8 @@ func TestGetCardsPerTag(t *testing.T) {
 	}
 	type args struct {
 		IDProject int
+		Data1     string
+		Data2     string
 	}
 	tests := []struct {
 		name       string
@@ -110,19 +125,23 @@ func TestGetCardsPerTag(t *testing.T) {
 			name: "VALID",
 			args: args{
 				1,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 200,
 		}, {
 			name: "INVALID",
 			args: args{
 				999999999,
+				"2025-04-01",
+				"2025-04-30",
 			},
 			wantStatus: 400,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerTag(tt.args.IDProject)
+			gotStatus, _ := GetCardsPerTag(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
 			if gotStatus != tt.wantStatus {
 				t.Errorf("GetCardsPerTag() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}

@@ -29,6 +29,7 @@ const docTemplate = `{
         },
         "/statistics/data/{id}": {
             "get": {
+                "description": "This endpoint displays all projects based on date range",
                 "produces": [
                     "application/json"
                 ],
@@ -43,6 +44,20 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-01\"",
+                        "description": "Data de início (formato: YYYY-MM-DD)",
+                        "name": "data1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-30\"",
+                        "description": "Data de fim (formato: YYYY-MM-DD)",
+                        "name": "data2",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
