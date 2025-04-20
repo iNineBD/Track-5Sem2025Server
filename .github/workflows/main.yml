@@ -113,5 +113,6 @@ jobs:
             -Dsonar.organization=ininetrack
             -Dsonar.projectBaseDir=src
             -Dsonar.go.coverage.reportPaths=coverage.out
-            -Dsonar.branch.name=${{ github.head_ref }}  # Nome da branch atual
             -Dsonar.verbose=true
+#            -Dsonar.branch.name=${{ github.head_ref }}  # Nome da branch atual
+            
