@@ -1,12 +1,6 @@
 name: Build, Test and SonarCloud Analysis
 
 on:
-  push:
-    branches:
-      - 'feature/**'
-      - 'fix/**'
-      - 'hotfix/**'
-      - 'release/**'
   pull_request:
     branches:
       - main
