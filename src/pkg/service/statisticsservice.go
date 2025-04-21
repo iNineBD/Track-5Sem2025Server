@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
 	"inine-track/pkg/service/utils"
@@ -16,6 +17,7 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 	var listCardsPerStatus []statisticsdto.StatusData
 	var listCardsRework []statisticsdto.ReworkCards
 	var listCardsFinished []statisticsdto.FinishedCards
+	var listCardsTimeExecution []statisticsdto.TimeExecutionCards
 
 	err := utils.GetProject(int64(IDProject))
 
@@ -59,8 +61,16 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 		return http.StatusBadRequest, gin.H{"error": "erro ao retornar a quantidade cards finalizados"}
 	}
 
+	result = database.DB.Raw(`select * from get_tempo_execucao_por_card($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsTimeExecution)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar o tempo de execução dos cards"}
+	}
+
+	fmt.Println("tempo ", listCardsTimeExecution)
+
 	response = gin.H{"success": statisticsdto.GetStatisticsResponse{TagData: listCardsPerTag, UserData: listCardsPerUser,
-		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, FinishedCards: listCardsFinished}}
+		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, FinishedCards: listCardsFinished, ExecutionCards: listCardsTimeExecution}}
 
 	return http.StatusOK, response
 }
