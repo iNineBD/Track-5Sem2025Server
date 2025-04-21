@@ -5,112 +5,62 @@ import (
 	"inine-track/pkg/dto/statisticsdto"
 	"inine-track/pkg/service/utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func GetCardsPerTag(IDProject int, data1 string, data2 string) (status int, listCardsPerTag []statisticsdto.TagData) {
+func GetMetrics(IDProject int, data1 string, data2 string) (status int, response gin.H) {
+
+	var listCardsPerTag []statisticsdto.TagData
+	var listCardsPerUser []statisticsdto.UserData
+	var listCardsPerStatus []statisticsdto.StatusData
+	var listCardsRework []statisticsdto.ReworkCards
+	var listCardsFinished []statisticsdto.FinishedCards
 
 	err := utils.GetProject(int64(IDProject))
 
 	if err != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": err.Error()}
 	}
 
 	t1, t2, err := utils.FormateDate(data1, data2)
 
 	if err != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": err}
 	}
 
-	result := database.DB.Raw(`select * from get_qtd_cards_por_tag($1,$2,$3)`, IDProject, t1, t2)
+	result := database.DB.Raw(`select * from get_qtd_cards_por_tag($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsPerTag)
 
 	if result.Error != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar as cards por tag"}
 	}
 
-	if err := result.Scan(&listCardsPerTag).Error; err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	return http.StatusOK, listCardsPerTag
-}
-
-func GetCardsPerUser(IDProject int, data1 string, data2 string) (status int, listCardsPerUser []statisticsdto.UserData) {
-
-	err := utils.GetProject(int64(IDProject))
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	t1, t2, err := utils.FormateDate(data1, data2)
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	result := database.DB.Raw(`select * from get_qtd_cards_por_colaborador($1,$2,$3)`, IDProject, t1, t2)
+	result = database.DB.Raw(`select * from get_qtd_cards_por_colaborador($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsPerUser)
 
 	if result.Error != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar as cards por colaborador"}
 	}
 
-	if err := result.Scan(&listCardsPerUser).Error; err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	return http.StatusOK, listCardsPerUser
-}
-
-func GetCardsPerStatus(IDProject int, data1 string, data2 string) (status int, listCardsPerStatus []statisticsdto.StatusData) {
-
-	err := utils.GetProject(int64(IDProject))
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	t1, t2, err := utils.FormateDate(data1, data2)
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	result := database.DB.Raw(`select * from get_qtd_cards_por_status($1,$2,$3)`, IDProject, t1, t2)
+	result = database.DB.Raw(`select * from get_qtd_cards_por_status($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsPerStatus)
 
 	if result.Error != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar as cards por tag"}
 	}
 
-	if err := result.Scan(&listCardsPerStatus).Error; err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	return http.StatusOK, listCardsPerStatus
-}
-
-func GetTimeDesenvCards(IDProject int, data1 string, data2 string) (status int, listCardsRework []statisticsdto.ReworkCards) {
-
-	err := utils.GetProject(int64(IDProject))
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	t1, t2, err := utils.FormateDate(data1, data2)
-
-	if err != nil {
-		return http.StatusBadRequest, nil
-	}
-
-	result := database.DB.Raw(`select * from get_retrabalhos($1,$2,$3)`, IDProject, t1, t2)
+	result = database.DB.Raw(`select * from get_retrabalhos($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsRework)
 
 	if result.Error != nil {
-		return http.StatusBadRequest, nil
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar a quantidade de retrabalho por card"}
 	}
 
-	if err := result.Scan(&listCardsRework).Error; err != nil {
-		return http.StatusBadRequest, nil
+	result = database.DB.Raw(`select * from get_qtd_cards_finalizados_por_projeto($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsFinished)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar a quantidade cards finalizados"}
 	}
 
-	return http.StatusOK, listCardsRework
+	response = gin.H{"success": statisticsdto.GetStatisticsResponse{TagData: listCardsPerTag, UserData: listCardsPerUser,
+		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, FinishedCards: listCardsFinished}}
+
+	return http.StatusOK, response
 }
