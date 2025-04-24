@@ -1,6 +1,21 @@
 info:
   contact: {}
 paths:
+  /login:
+    post:
+      description: Autentica o usuário com email e senha e retorna um token JWT
+      parameters:
+      - description: email do usuario para busca
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Realiza o login de um usuário
+      tags:
+      - Usuário
   /projects/data:
     get:
       produces:
