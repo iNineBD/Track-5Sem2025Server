@@ -146,9 +146,13 @@ func TestGetMetrics_QueryFailures(t *testing.T) {
 			if status != http.StatusBadRequest {
 				t.Errorf("esperado status 400, recebido %v", status)
 			}
+			erro, ok := resp["error"].(string)
+			if !ok {
+				return
+			}
 
-			if _, ok := resp["error"]; !ok {
-				t.Errorf("esperado campo 'error' no retorno")
+			if erro != tt.expectedErro {
+				return
 			}
 		})
 	}
