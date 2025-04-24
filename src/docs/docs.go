@@ -15,6 +15,28 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "description": "Autentica o usuário com email e senha e retorna um token JWT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Realiza o login de um usuário",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "email do usuario para busca",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/projects/data": {
             "get": {
                 "produces": [
