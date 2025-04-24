@@ -2,9 +2,13 @@ package routes
 
 import (
 	// Import necessário para gerar documentação com Swagger
+
 	_ "inine-track/docs"
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
+	"inine-track/pkg/middleware"
+	"inine-track/pkg/service"
+	"net/http"
 
 	"log"
 
@@ -23,20 +27,46 @@ func HandlleRequest() {
 
 	r.Use(config.CorsConfig())
 
-	projects := r.Group("/projects")
+	// Endpoint de login real
+	r.POST("/login", func(c *gin.Context) {
+		var loginRequest struct {
+			Email    string `json:"email" binding:"required,email"`
+			Password string `json:"password" binding:"required"`
+		}
+
+		if err := c.ShouldBindJSON(&loginRequest); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Dados de login inválidos"})
+			return
+		}
+
+		response, err := service.Login(loginRequest.Email, loginRequest.Password)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, response)
+	})
+
+	protected := r.Group("/api")
+	protected.Use(middleware.JWTMiddleware())
 	{
-		projects.GET("/data", controller.GetProjects)
-	}
 
-	statistics := r.Group("/statistics")
-	{
-		statistics.GET("/data/:id", controller.GetStatisticsData)
-	}
+		projects := r.Group("/projects")
+		{
+			projects.GET("/data", controller.GetProjects)
+		}
 
-	// Endpoint Swagger
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		statistics := r.Group("/statistics")
+		{
+			statistics.GET("/data/:id", controller.GetStatisticsData)
+		}
 
-	if err := r.Run(); err != nil {
-		log.Fatalf("Erro ao iniciar o servidor: %v", err)
+		// Endpoint Swagger
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+		if err := r.Run(); err != nil {
+			log.Fatalf("Erro ao iniciar o servidor: %v", err)
+		}
 	}
 }
