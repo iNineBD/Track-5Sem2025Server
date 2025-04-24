@@ -141,6 +141,15 @@ func TestGetMetrics_QueryFailures(t *testing.T) {
 					mock.ExpectQuery("(?i)" + q).WillReturnRows(sqlmock.NewRows([]string{"col"}).AddRow(1))
 				}
 			}
+			status, resp := GetMetrics(1, "2025-04-01", "2025-04-30")
+
+			if status != http.StatusBadRequest {
+				t.Errorf("esperado status 400, recebido %v", status)
+			}
+
+			if _, ok := resp["error"]; !ok {
+				t.Errorf("esperado campo 'error' no retorno")
+			}
 		})
 	}
 }
