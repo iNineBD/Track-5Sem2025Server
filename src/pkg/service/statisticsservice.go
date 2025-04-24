@@ -16,6 +16,7 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 	var listCardsPerUser []statisticsdto.UserData
 	var listCardsPerStatus []statisticsdto.StatusData
 	var listCardsRework []statisticsdto.ReworkCards
+	var listCardsStarted []statisticsdto.StartedCards
 	var listCardsFinished []statisticsdto.FinishedCards
 	var listCardsTimeExecution []statisticsdto.TimeExecutionCards
 
@@ -55,6 +56,12 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 		return http.StatusBadRequest, gin.H{"error": "erro ao retornar a quantidade de retrabalho por card"}
 	}
 
+	result = database.DB.Raw(`select * from get_qtd_cards_criados_por_projeto($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsStarted)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar a quantidade cards iniciados"}
+	}
+
 	result = database.DB.Raw(`select * from get_qtd_cards_finalizados_por_projeto($1,$2,$3)`, IDProject, t1, t2).Find(&listCardsFinished)
 
 	if result.Error != nil {
@@ -70,7 +77,8 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 	fmt.Println("tempo ", listCardsTimeExecution)
 
 	response = gin.H{"success": statisticsdto.GetStatisticsResponse{TagData: listCardsPerTag, UserData: listCardsPerUser,
-		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, FinishedCards: listCardsFinished, ExecutionCards: listCardsTimeExecution}}
+		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, StartedCards: listCardsStarted, FinishedCards: listCardsFinished,
+		ExecutionCards: listCardsTimeExecution}}
 
 	return http.StatusOK, response
 }
