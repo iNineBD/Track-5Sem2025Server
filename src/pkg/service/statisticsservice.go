@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
 	"inine-track/pkg/service/utils"
@@ -73,8 +72,6 @@ func GetMetrics(IDProject int, data1 string, data2 string) (status int, response
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao retornar o tempo de execução dos cards"}
 	}
-
-	fmt.Println("tempo ", listCardsTimeExecution)
 
 	response = gin.H{"success": statisticsdto.GetStatisticsResponse{TagData: listCardsPerTag, UserData: listCardsPerUser,
 		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, StartedCards: listCardsStarted, FinishedCards: listCardsFinished,
