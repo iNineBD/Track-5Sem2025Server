@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetCardsPerStatus(t *testing.T) {
+func TestGetMetrics(t *testing.T) {
 	err := database.ConnectDB()
 
 	if err != nil {
