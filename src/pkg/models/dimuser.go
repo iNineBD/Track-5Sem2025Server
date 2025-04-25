@@ -5,7 +5,7 @@ type DimUser struct {
 	NameUser string  `json:"name_user"`
 	Email    string  `json:"email"`
 	IDRole   int64   `json:"id_role"`
-	DimRole  DimRole `gorm:"foreignKey;IDRole;references:IDRole"`
+	DimRole  DimRole `gorm:"foreignKey:IDRole;references:IDRole"`
 	Password string  `json:"password"`
 }
 
