@@ -222,3 +222,147 @@ func TestGetListCardsPerStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestGetListCardsRework(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("erro ao criar mock do banco: %v", err)
+	}
+	defer db.Close()
+
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+
+	tests := []struct {
+		name string
+		args struct {
+			IDProject    int64
+			data1, data2 time.Time
+		}
+		wantReworkCards []statisticsdto.ReworkCards
+		wantErr         gin.H
+	}{
+		{
+			name: "Erro no banco",
+			args: struct {
+				IDProject    int64
+				data1, data2 time.Time
+			}{
+				1, time.Now().AddDate(0, 0, -7), time.Now(),
+			},
+			wantReworkCards: nil,
+			wantErr:         gin.H{"error": "erro ao retornar a quantidade de retrabalho por card"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock.ExpectQuery("select \\* from get_retrabalhos").
+				WillReturnError(errors.New("erro no banco simulado"))
+
+			got, err := GetListCardsRework(tt.args.IDProject, tt.args.data1, tt.args.data2)
+
+			if !reflect.DeepEqual(got, tt.wantReworkCards) {
+				t.Errorf("got = %v, want %v", got, tt.wantReworkCards)
+			}
+			if !reflect.DeepEqual(err, tt.wantErr) {
+				t.Errorf("gotErr = %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestGetListCardsFinished(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("erro ao criar mock do banco: %v", err)
+	}
+	defer db.Close()
+
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+
+	tests := []struct {
+		name string
+		args struct {
+			IDProject    int64
+			data1, data2 time.Time
+		}
+		wantFinishedCards []statisticsdto.FinishedCards
+		wantErr           gin.H
+	}{
+		{
+			name: "Erro no banco",
+			args: struct {
+				IDProject    int64
+				data1, data2 time.Time
+			}{
+				1, time.Now().AddDate(0, 0, -30), time.Now(),
+			},
+			wantFinishedCards: nil,
+			wantErr:           gin.H{"error": "erro ao retornar a quantidade de cards finalizados por projet"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock.ExpectQuery("select \\* from get_qtd_cards_criados_por_projeto").
+				WillReturnError(errors.New("simulação de erro"))
+
+			got, err := GetListCardsFinished(tt.args.IDProject, tt.args.data1, tt.args.data2)
+
+			if !reflect.DeepEqual(got, tt.wantFinishedCards) {
+				t.Errorf("got = %v, want %v", got, tt.wantFinishedCards)
+			}
+			if !reflect.DeepEqual(err, tt.wantErr) {
+				t.Errorf("gotErr = %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestGetListCardsTimeExecution(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("erro ao criar mock do banco: %v", err)
+	}
+	defer db.Close()
+
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+
+	tests := []struct {
+		name string
+		args struct {
+			IDProject    int64
+			data1, data2 time.Time
+		}
+		wantTimeExecution []statisticsdto.TimeExecutionCards
+		wantErr           gin.H
+	}{
+		{
+			name: "Erro no banco",
+			args: struct {
+				IDProject    int64
+				data1, data2 time.Time
+			}{
+				2, time.Now().AddDate(0, -1, 0), time.Now(),
+			},
+			wantTimeExecution: nil,
+			wantErr:           gin.H{"error": "erro ao retornar o tempo de execução dos cards"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock.ExpectQuery("select \\* from get_qtd_cards_criados_por_projeto").
+				WillReturnError(errors.New("falha intencional"))
+
+			got, err := GetListCardsTimeExecution(tt.args.IDProject, tt.args.data1, tt.args.data2)
+
+			if !reflect.DeepEqual(got, tt.wantTimeExecution) {
+				t.Errorf("got = %v, want %v", got, tt.wantTimeExecution)
+			}
+			if !reflect.DeepEqual(err, tt.wantErr) {
+				t.Errorf("gotErr = %v, want %v", err, tt.wantErr)
+			}
+		})
+	}
+}
