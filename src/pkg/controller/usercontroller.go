@@ -16,8 +16,7 @@ import (
 // @Router /login [post]
 func LoginHandler(c *gin.Context) {
 	var request struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Email string `json:"email"`
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -25,7 +24,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	response, err := service.Login(request.Email, request.Password)
+	response, err := service.Login(request.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
