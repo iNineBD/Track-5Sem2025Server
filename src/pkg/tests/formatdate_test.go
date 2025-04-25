@@ -1,6 +1,7 @@
-package utils
+package utils_test
 
 import (
+	"inine-track/pkg/service/utils"
 	"testing"
 	"time"
 )
@@ -38,7 +39,7 @@ func TestFormateDate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got1, got2, err := FormateDate(tt.args.data1, tt.args.data2)
+			got1, got2, err := utils.FormateDate(tt.args.data1, tt.args.data2)
 
 			if (err != nil) != tt.err {
 				t.Errorf("FormateDate() error = %v, wantErr %v", err, tt.err)
