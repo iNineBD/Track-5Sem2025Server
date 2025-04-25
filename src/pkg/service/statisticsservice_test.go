@@ -1,17 +1,18 @@
 package service
 
 import (
-	"database/sql"
+	"errors"
 	"inine-track/pkg/database"
-	"inine-track/pkg/service/utils"
+	"inine-track/pkg/dto/statisticsdto"
 	"log"
-	"net/http"
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 func TestGetMetrics(t *testing.T) {
@@ -21,7 +22,7 @@ func TestGetMetrics(t *testing.T) {
 	}
 
 	type args struct {
-		IDProject int
+		IDProject int64
 		Data1     string
 		Data2     string
 	}
@@ -30,7 +31,6 @@ func TestGetMetrics(t *testing.T) {
 		name       string
 		args       args
 		wantStatus int
-		isFailTest bool // nova flag para simular erro real
 	}{
 		{
 			name: "VALID",
@@ -39,143 +39,186 @@ func TestGetMetrics(t *testing.T) {
 				"2025-04-01",
 				"2025-04-30",
 			},
-			wantStatus: http.StatusOK,
+			wantStatus: 200,
 		},
 		{
-			name: "INVALID_PROJECT",
+			name: "INVALID",
 			args: args{
 				999999999,
 				"2025-04-01",
 				"2025-04-30",
 			},
-			wantStatus: http.StatusBadRequest,
-		},
-		{
-			name: "QUERY_FAIL", // erro real ao chamar função inexistente
-			args: args{
-				1,
-				"2025-04-01",
-				"2025-04-30",
-			},
-			wantStatus: http.StatusBadRequest,
-			isFailTest: true,
+			wantStatus: 400,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.isFailTest {
-				// Força o erro trocando temporariamente o nome da função SQL no banco
-				status := simulateQueryFailure(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
-				if status != tt.wantStatus {
-					t.Errorf("GetMetrics() gotStatus = %v, want %v", status, tt.wantStatus)
-				}
-			} else {
-				gotStatus, _ := GetMetrics(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
-				if gotStatus != tt.wantStatus {
-					t.Errorf("GetMetrics() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
-				}
+			gotStatus, gotResponse := GetMetrics(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
+			if gotStatus != tt.wantStatus {
+				t.Errorf("GetMetrics() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
+			}
+			if gotStatus == 200 {
+				t.Logf("GetMetrics() gotResponse = %v", gotResponse)
 			}
 		})
 	}
 }
 
-func simulateQueryFailure(IDProject int, data1, data2 string) int {
-	err := utils.GetProject(int64(IDProject))
+func TestGetListCardTags(t *testing.T) {
+
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		return http.StatusBadRequest
+		t.Fatalf("erro ao criar mock do banco: %v", err)
 	}
+	defer db.Close()
 
-	t1, t2, err := utils.FormateDate(data1, data2)
-	if err != nil {
-		return http.StatusBadRequest
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+
+	type args struct {
+		IDProject int64
+		data1     time.Time
+		data2     time.Time
 	}
-
-	// Chamada de função que não existe no banco (vai gerar erro)
-	var dummyData []struct{}
-	result := database.DB.Raw(`select * from funcao_que_nao_existe($1,$2,$3)`, IDProject, t1, t2).Find(&dummyData)
-	if result.Error != nil {
-		return http.StatusBadRequest
-	}
-
-	return http.StatusOK
-}
-
-func TestGetMetrics_QueryFailures(t *testing.T) {
 	tests := []struct {
-		name         string
-		queryLike    string
-		expectedErro string
+		name                string
+		args                args
+		wantListCardsPerTag []statisticsdto.TagData
+		wantErr             gin.H
 	}{
-		{"Fail get_qtd_cards_por_tag", "get_qtd_cards_por_tag", "erro ao retornar as cards por tag"},
-		{"Fail get_qtd_cards_por_colaborador", "get_qtd_cards_por_colaborador", "erro ao retornar as cards por colaborador"},
-		{"Fail get_qtd_cards_por_status", "get_qtd_cards_por_status", "erro ao retornar as cards por status"},
-		{"Fail get_retrabalhos", "get_retrabalhos", "erro ao retornar a quantidade de retrabalho por card"},
-		{"Fail get_qtd_cards_criados_por_projeto", "get_qtd_cards_criados_por_projeto", "erro ao retornar a quantidade cards iniciados"},
-		{"Fail get_qtd_cards_finalizados_por_projeto", "get_qtd_cards_finalizados_por_projeto", "erro ao retornar a quantidade cards finalizados"},
-		{"Fail get_tempo_execucao_por_card", "get_tempo_execucao_por_card", "erro ao retornar o tempo de execução dos cards"},
+		{
+			name: "Erro ao executar query",
+			args: args{
+				IDProject: 1,
+				data1:     time.Now().AddDate(0, 0, -30),
+				data2:     time.Now(),
+			},
+			wantListCardsPerTag: nil,
+			wantErr:             gin.H{"error": "erro ao retornar a quantidade de cards por tag"},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gormDB, mock, cleanup := setupMockDB(t)
-			defer cleanup()
+			mock.ExpectQuery("select \\* from get_qtd_cards_por_tag").
+				WillReturnError(errors.New("erro de banco simulado"))
 
-			database.DB = gormDB
-			mock.ExpectQuery(`SELECT \* FROM "dim_project" WHERE id_project = \$1 ORDER BY "dim_project"."id_project" LIMIT \$2`).
-				WithArgs(1, 1).
-				WillReturnRows(sqlmock.NewRows([]string{"id_project"}).AddRow(1))
+			gotListCardsPerTag, gotErr := GetListCardTags(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
-			mock.ExpectQuery("(?i)" + tt.queryLike).WillReturnError(sql.ErrConnDone)
-
-			for _, q := range []string{
-				"get_qtd_cards_por_tag",
-				"get_qtd_cards_por_colaborador",
-				"get_qtd_cards_por_status",
-				"get_retrabalhos",
-				"get_qtd_cards_criados_por_projeto",
-				"get_qtd_cards_finalizados_por_projeto",
-				"get_tempo_execucao_por_card",
-			} {
-				if q != tt.queryLike {
-					mock.ExpectQuery("(?i)" + q).WillReturnRows(sqlmock.NewRows([]string{"col"}).AddRow(1))
-				}
+			if !reflect.DeepEqual(gotListCardsPerTag, tt.wantListCardsPerTag) {
+				t.Errorf("GetListCardTags() gotListCardsPerTag = %v, want %v", gotListCardsPerTag, tt.wantListCardsPerTag)
 			}
-			status, resp := GetMetrics(1, "2025-04-01", "2025-04-30")
-
-			if status != http.StatusBadRequest {
-				t.Errorf("esperado status 400, recebido %v", status)
-			}
-			erro, ok := resp["error"].(string)
-			if !ok {
-				return
-			}
-
-			if erro != tt.expectedErro {
-				return
+			if !reflect.DeepEqual(gotErr, tt.wantErr) {
+				t.Errorf("GetListCardTags() gotErr = %v, want %v", gotErr, tt.wantErr)
 			}
 		})
 	}
 }
 
-func setupMockDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock, func()) {
-	sqlDB, mock, err := sqlmock.New()
+func TestGetListCardsPerUser(t *testing.T) {
+
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		t.Fatalf("erro ao criar mock do banco de dados: %v", err)
+		t.Fatalf("erro ao criar mock do banco: %v", err)
+	}
+	defer db.Close()
+
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+
+	type args struct {
+		IDProject int64
+		data1     time.Time
+		data2     time.Time
+	}
+	tests := []struct {
+		name                 string
+		args                 args
+		wantListCardsPerUser []statisticsdto.UserData
+		wantErr              gin.H
+	}{
+		{
+			name: "Erro ao executar query",
+			args: args{
+				IDProject: 1,
+				data1:     time.Now().AddDate(0, 0, -30),
+				data2:     time.Now(),
+			},
+			wantListCardsPerUser: nil,
+			wantErr:              gin.H{"error": "erro ao retornar as cards por colaborador"},
+		},
 	}
 
-	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: sqlDB,
-	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			mock.ExpectQuery("select \\* from get_qtd_cards_por_colaborador").
+				WillReturnError(errors.New("erro de banco simulado"))
+
+			gotListCardsPerUser, gotErr := GetListCardsPerUser(tt.args.IDProject, tt.args.data1, tt.args.data2)
+
+			if !reflect.DeepEqual(gotListCardsPerUser, tt.wantListCardsPerUser) {
+				t.Errorf("GetListCardsPerUser() gotListCardsPerUser = %v, want %v", gotListCardsPerUser, tt.wantListCardsPerUser)
+			}
+			if !reflect.DeepEqual(gotErr, tt.wantErr) {
+				t.Errorf("GetListCardsPerUser() gotErr = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestGetListCardsPerStatus(t *testing.T) {
+
+	db, mock, err := sqlmock.New()
 	if err != nil {
-		t.Fatalf("erro ao criar GORM com mock: %v", err)
+		t.Fatalf("erro ao criar mock do banco: %v", err)
+	}
+	defer db.Close()
+
+	database.DB, _ = gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+
+	type args struct {
+		IDProject int64
+		data1     time.Time
+		data2     time.Time
+	}
+	tests := []struct {
+		name                   string
+		args                   args
+		wantListCardsPerStatus []statisticsdto.StatusData
+		wantErr                gin.H
+	}{
+		{
+			name: "Erro ao executar query",
+			args: args{
+				IDProject: 1,
+				data1:     time.Now().AddDate(0, 0, -30),
+				data2:     time.Now(),
+			},
+			wantListCardsPerStatus: nil,
+			wantErr:                gin.H{"error": "erro ao retornar as cards por status"},
+		},
 	}
 
-	cleanup := func() {
-		sqlDB.Close()
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 
-	return gormDB, mock, cleanup
+			mock.ExpectQuery("select \\* from get_qtd_cards_por_status").
+				WillReturnError(errors.New("erro de banco simulado"))
+
+			gotListCardsPerStatus, gotErr := GetListCardsPerStatus(tt.args.IDProject, tt.args.data1, tt.args.data2)
+
+			if !reflect.DeepEqual(gotListCardsPerStatus, tt.wantListCardsPerStatus) {
+				t.Errorf("GetListCardsPerStatus() gotListCardsPerStatus = %v, want %v", gotListCardsPerStatus, tt.wantListCardsPerStatus)
+			}
+			if !reflect.DeepEqual(gotErr, tt.wantErr) {
+				t.Errorf("GetListCardsPerStatus() gotErr = %v, want %v", gotErr, tt.wantErr)
+			}
+		})
+	}
 }

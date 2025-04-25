@@ -3,7 +3,6 @@ package controller
 import (
 	"inine-track/pkg/service"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +17,7 @@ import (
 // @Router /statistics/data/{id} [get]
 func GetStatisticsData(c *gin.Context) {
 
-	var idProject, _ = strconv.Atoi(strings.TrimSpace(c.Param("id")))
+	var idProject, _ = strconv.ParseInt(c.Param("id"), 10, 64)
 	var data1 = c.DefaultQuery("data1", "2000-01-01")
 	var data2 = c.DefaultQuery("data2", "2025-01-01")
 
