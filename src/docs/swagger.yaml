@@ -94,11 +94,22 @@ paths:
       - Projects
   /statistics/data/{id}:
     get:
+      description: This endpoint displays all projects based on date range
       parameters:
       - description: Id do projeto para busca
         in: path
         name: id
         required: true
+        type: string
+      - description: 'Data de início (formato: YYYY-MM-DD)'
+        example: '"2025-04-01"'
+        in: query
+        name: data1
+        type: string
+      - description: 'Data de fim (formato: YYYY-MM-DD)'
+        example: '"2025-04-30"'
+        in: query
+        name: data2
         type: string
       produces:
       - application/json

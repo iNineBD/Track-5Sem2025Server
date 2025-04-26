@@ -1,4 +1,4 @@
-name: GolangCI-Lint
+name: GolangCI-Lint and Quick Tests
 
 on:
   push:
@@ -7,11 +7,6 @@ on:
       - 'feature/**'
       - 'hotfix/**'
       - 'release/**'
-  pull_request:
-    branches:
-      - 'sprint-1'
-      - 'sprint-2'
-      - 'sprint-3'
       
 jobs:
   lint:
@@ -26,16 +21,91 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.4'
+          cache: false # Desabilita o cache interno do setup-go (vamos usar manual)
+
+      - name: Cache Go Modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('src/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
       - name: Install GolangCI-Lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.8
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
-      - name: Ensure Go Modules #Avaliar se os módulos do GO estão configurados corretamente.
+      - name: Format code with gofmt
         working-directory: src
-        run: go mod tidy #Irá baixar as dependências.
+        run: go fmt ./...
+
+      - name: Ensure Go Modules
+        working-directory: src
+        run: go mod tidy -v
 
       - name: Run GolangCI-Lint
         working-directory: src
         run: golangci-lint run ./...
+
+  quick-test: #Teste rápido para push e validação do programa e alterações.
+    name: Build and Basic Tests
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.4'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies
+        working-directory: src
+        run: |
+          if [ ! -f go.sum ]; then
+            go mod tidy
+          fi
+          go mod download
+
+      - name: Create .env file
+        working-directory: src
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > ../.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ../.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ../.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../.env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../.env
+
+      - name: Create .env file in service
+        working-directory: src/pkg/service
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> .env
+
+      - name: Run tests
+        working-directory: src
+        run: go test ./...
+
+      - name: Build application
+        working-directory: src
+        run: go build -v ./...
