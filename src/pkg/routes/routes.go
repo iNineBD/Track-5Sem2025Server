@@ -1,7 +1,6 @@
 package routes
 
 import (
-	_ "inine-track/docs"
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
 	"inine-track/pkg/middleware"
