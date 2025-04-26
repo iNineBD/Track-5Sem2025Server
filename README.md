@@ -35,6 +35,11 @@ Before starting, make sure that:
    DB_PORT=port-database
    DB_NAME=name-database
    DB_SCHEMA=schema-database
+   EMAIL_HOST=email-host
+   EMAIL_PORT=email-port
+   EMAIL_HOST_USERNAME=email-host-user
+   EMAIL_HOST_PASSWORD=email-host-password
+   EMAIL_HOST_FROM=email-host-from
    ```
 
 3. **Install Dependencies**  
