@@ -1,19 +1,87 @@
+definitions:
+  userdto.AuthenticateRequest:
+    properties:
+      email:
+        type: string
+      newPassword:
+        type: string
+      token:
+        type: string
+    required:
+    - email
+    - newPassword
+    - token
+    type: object
+  userdto.FirstAccessRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  userdto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
 info:
   contact: {}
 paths:
-  /login:
+  /access/firstAccess:
     post:
+      consumes:
+      - application/json
+      description: Gera token para primeiro acesso e envia por email
+      parameters:
+      - description: Email do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userdto.FirstAccessRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Primeiro acesso do usuário
+      tags:
+      - Usuário
+  /access/login:
+    post:
+      consumes:
+      - application/json
       description: Autentica o usuário com email e senha e retorna um token JWT
       parameters:
-      - description: email do usuario para busca
-        in: path
-        name: email
+      - description: Credenciais de login
+        in: body
+        name: request
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/userdto.LoginRequest'
       produces:
       - application/json
       responses: {}
       summary: Realiza o login de um usuário
+      tags:
+      - Usuário
+  /access/setPassword:
+    post:
+      consumes:
+      - application/json
+      description: Valida o token e define uma nova senha para o usuário
+      parameters:
+      - description: Token e nova senha
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userdto.AuthenticateRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Define nova senha
       tags:
       - Usuário
   /projects/data:
