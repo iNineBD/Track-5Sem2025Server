@@ -1,8 +1,8 @@
-package utils_test
+package utils
 
 import (
 	"inine-track/pkg/database"
-	"inine-track/pkg/service/utils"
+	//	"inine-track/pkg/service/utils" -- Ciclo desnecessário de importação
 	"log"
 	"testing"
 )
@@ -38,7 +38,7 @@ func TestGetProject(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := utils.GetProject(tt.args.idProject); (err != nil) != tt.err {
+			if err := GetProject(tt.args.idProject); (err != nil) != tt.err {
 				t.Errorf("GetProject() error = %v, wantErr %v", err, tt.err)
 			}
 		})

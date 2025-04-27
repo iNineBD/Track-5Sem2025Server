@@ -3,7 +3,7 @@ package routes
 import (
 	"log"
 
-	_ "inine-track/docs"
+	_ "inine-track/docs" // Necessário para gerar a documentação da API
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
 	"inine-track/pkg/middleware"

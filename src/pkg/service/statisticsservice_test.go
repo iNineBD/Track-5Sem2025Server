@@ -1,10 +1,11 @@
-package utils_test
+package service
 
 import (
 	"errors"
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
-	"inine-track/pkg/service"
+
+	//	"inine-track/pkg/service" -- Ciclo desnecessário de importação
 	"log"
 	"reflect"
 	"testing"
@@ -55,7 +56,7 @@ func TestGetMetrics(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, gotResponse := service.GetMetrics(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
+			gotStatus, gotResponse := GetMetrics(tt.args.IDProject, tt.args.Data1, tt.args.Data2)
 			if gotStatus != tt.wantStatus {
 				t.Errorf("GetMetrics() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}
@@ -106,7 +107,7 @@ func TestGetListCardTags(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_por_tag").
 				WillReturnError(errors.New("erro de banco simulado"))
 
-			gotListCardsPerTag, gotErr := service.GetListCardTags(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			gotListCardsPerTag, gotErr := GetListCardTags(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(gotListCardsPerTag, tt.wantListCardsPerTag) {
 				t.Errorf("GetListCardTags() gotListCardsPerTag = %v, want %v", gotListCardsPerTag, tt.wantListCardsPerTag)
@@ -159,7 +160,7 @@ func TestGetListCardsPerUser(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_por_colaborador").
 				WillReturnError(errors.New("erro de banco simulado"))
 
-			gotListCardsPerUser, gotErr := service.GetListCardsPerUser(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			gotListCardsPerUser, gotErr := GetListCardsPerUser(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(gotListCardsPerUser, tt.wantListCardsPerUser) {
 				t.Errorf("GetListCardsPerUser() gotListCardsPerUser = %v, want %v", gotListCardsPerUser, tt.wantListCardsPerUser)
@@ -212,7 +213,7 @@ func TestGetListCardsPerStatus(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_por_status").
 				WillReturnError(errors.New("erro de banco simulado"))
 
-			gotListCardsPerStatus, gotErr := service.GetListCardsPerStatus(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			gotListCardsPerStatus, gotErr := GetListCardsPerStatus(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(gotListCardsPerStatus, tt.wantListCardsPerStatus) {
 				t.Errorf("GetListCardsPerStatus() gotListCardsPerStatus = %v, want %v", gotListCardsPerStatus, tt.wantListCardsPerStatus)
@@ -260,7 +261,7 @@ func TestGetListCardsRework(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_retrabalhos").
 				WillReturnError(errors.New("erro no banco simulado"))
 
-			got, err := service.GetListCardsRework(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			got, err := GetListCardsRework(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(got, tt.wantReworkCards) {
 				t.Errorf("got = %v, want %v", got, tt.wantReworkCards)
@@ -308,7 +309,7 @@ func TestGetListCardsStarted(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_criados_por_projeto").
 				WillReturnError(errors.New("simulação de erro"))
 
-			got, err := service.GetListCardsStarted(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			got, err := GetListCardsStarted(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(got, tt.wantStartedCards) {
 				t.Errorf("got = %v, want %v", got, tt.wantStartedCards)
@@ -356,7 +357,7 @@ func TestGetListCardsFinished(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_criados_por_projeto").
 				WillReturnError(errors.New("simulação de erro"))
 
-			got, err := service.GetListCardsFinished(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			got, err := GetListCardsFinished(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(got, tt.wantFinishedCards) {
 				t.Errorf("got = %v, want %v", got, tt.wantFinishedCards)
@@ -404,7 +405,7 @@ func TestGetListCardsTimeExecution(t *testing.T) {
 			mock.ExpectQuery("select \\* from get_qtd_cards_criados_por_projeto").
 				WillReturnError(errors.New("falha intencional"))
 
-			got, err := service.GetListCardsTimeExecution(tt.args.IDProject, tt.args.data1, tt.args.data2)
+			got, err := GetListCardsTimeExecution(tt.args.IDProject, tt.args.data1, tt.args.data2)
 
 			if !reflect.DeepEqual(got, tt.wantTimeExecution) {
 				t.Errorf("got = %v, want %v", got, tt.wantTimeExecution)

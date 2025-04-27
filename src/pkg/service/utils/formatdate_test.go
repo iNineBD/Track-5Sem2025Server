@@ -1,7 +1,7 @@
-package utils_test
+package utils
 
 import (
-	"inine-track/pkg/service/utils"
+	//	"inine-track/pkg/service/utils" -- Ciclo desnecessário de importação
 	"testing"
 	"time"
 )
@@ -39,7 +39,7 @@ func TestFormateDate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got1, got2, err := utils.FormateDate(tt.args.data1, tt.args.data2)
+			got1, got2, err := FormateDate(tt.args.data1, tt.args.data2)
 
 			if (err != nil) != tt.err {
 				t.Errorf("FormateDate() error = %v, wantErr %v", err, tt.err)
