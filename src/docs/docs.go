@@ -15,6 +15,87 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/access/firstAccess": {
+            "post": {
+                "description": "Gera token para primeiro acesso e envia por email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Primeiro acesso do usuário",
+                "parameters": [
+                    {
+                        "description": "Email do usuário",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.FirstAccessRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/access/login": {
+            "post": {
+                "description": "Autentica o usuário com email e senha e retorna um token JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Realiza o login de um usuário",
+                "parameters": [
+                    {
+                        "description": "Credenciais de login",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/access/setPassword": {
+            "post": {
+                "description": "Valida o token e define uma nova senha para o usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Define nova senha",
+                "parameters": [
+                    {
+                        "description": "Token e nova senha",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.AuthenticateRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/projects/data": {
             "get": {
                 "produces": [
@@ -29,6 +110,7 @@ const docTemplate = `{
         },
         "/statistics/data/{id}": {
             "get": {
+                "description": "This endpoint displays all projects based on date range",
                 "produces": [
                     "application/json"
                 ],
@@ -43,9 +125,67 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-01\"",
+                        "description": "Data de início (formato: YYYY-MM-DD)",
+                        "name": "data1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-30\"",
+                        "description": "Data de fim (formato: YYYY-MM-DD)",
+                        "name": "data2",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "userdto.AuthenticateRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "newPassword",
+                "token"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "newPassword": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "userdto.FirstAccessRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "userdto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
             }
         }
     }

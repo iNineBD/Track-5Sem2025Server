@@ -1,13 +1,9 @@
 package models
 
-import "time"
-
 type DimProject struct {
-	ID           int64     `json:"id" gorm:"primaryKey;autoIncrement"`
-	Description  string    `json:"description"`
-	Name         string    `json:"name"`
-	CreatedDate  time.Time `json:"created_date"`
-	ModifiedDate time.Time `json:"modified_date"`
+	IDProject   int64  `json:"id_project" gorm:"primaryKey;autoIncrement"`
+	NameProject string `json:"name_project"`
+	Description string `json:"description"`
 }
 
 func (DimProject) TableName() string {

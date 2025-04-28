@@ -1,39 +1,42 @@
 package routes
 
 import (
-	// Import necessário para gerar documentação com Swagger
-	_ "inine-track/docs"
+	"log"
+
+	_ "inine-track/docs" // Necessário para gerar a documentação da API
 	"inine-track/pkg/config"
 	"inine-track/pkg/controller"
-
-	"log"
+	"inine-track/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title API Inine-Track
-// @version 1.0
-// @description Esta é uma API feita para análise de dos projetos no sistema taiga
-// @host localhost:8080
-// @BasePath /
 func HandlleRequest() {
 	r := gin.Default()
-
 	r.Use(config.CorsConfig())
-
-	projects := r.Group("/projects")
+	user := r.Group("/access")
 	{
-		projects.GET("/data", controller.GetProjects)
+		user.POST("/login", controller.LoginController)
+		user.POST("/firstAccess", controller.FirstAccessController)
+		user.POST("/setPassword", controller.SetPasswordController)
 	}
 
-	statistics := r.Group("/statistics")
+	protected := r.Group("/api")
+	protected.Use(middleware.JWTMiddleware())
 	{
-		statistics.GET("/data/:id", controller.GetStatisticsData)
+		projects := r.Group("/projects")
+		{
+			projects.GET("/data", controller.GetProjects)
+		}
+
+		statistics := r.Group("/statistics")
+		{
+			statistics.GET("/data/:id", controller.GetStatisticsData)
+		}
 	}
 
-	// Endpoint Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	if err := r.Run(); err != nil {

@@ -1,16 +1,18 @@
 run:
   timeout: 5m
+  tests: false # Não analisa arquivos *_test.go
 
 linters:
   enable:
-    - errcheck
-    - govet
-    - staticcheck
-    - revive
     - gofmt
-    - gocyclo
-    - gosimple #Atribuido regras do linter.
+    - govet
+  #disable:  - golint
+    - staticcheck
+    - errcheck
     - ineffassign
+    - revive
+    - gocyclo
+    - gosimple 
     - unused
   #disable:  - deadcode
   #disable:  - structcheck
@@ -19,3 +21,15 @@ linters:
 issues:
   max-issues-per-linter: 10
   max-same-issues: 5
+  exclude-rules:
+  - path: _test\.go
+    text: "should not be checking tests"
+  exclude-dirs:
+    - dto
+    - models
+
+# Adicionar a exclusão para cobertura
+coverage:
+  exclude-dirs:
+    - dto
+    - models

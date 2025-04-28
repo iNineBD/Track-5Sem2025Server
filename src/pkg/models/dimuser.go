@@ -1,12 +1,12 @@
 package models
 
 type DimUser struct {
-	ID       int64   `json:"id" gorm:"primaryKey;autoIncrement"`
-	FullName string  `json:"full_name"`
-	Color    string  `json:"color"`
+	IDUser   int64   `json:"id_user" gorm:"primaryKey;autoIncrement"`
+	NameUser string  `json:"name_user"`
 	Email    string  `json:"email"`
-	IDRole   int64   `json:"ID_role"`
-	DimRole  DimRole `gorm:"foreignKey;IdRole;references:Id"`
+	IDRole   int64   `json:"id_role"`
+	DimRole  DimRole `gorm:"foreignKey:IDRole;references:IDRole"`
+	Password string  `json:"password"`
 }
 
 func (DimUser) TableName() string {

@@ -35,6 +35,11 @@ Before starting, make sure that:
    DB_PORT=port-database
    DB_NAME=name-database
    DB_SCHEMA=schema-database
+   EMAIL_HOST=email-host
+   EMAIL_PORT=email-port
+   EMAIL_HOST_USERNAME=email-host-user
+   EMAIL_HOST_PASSWORD=email-host-password
+   EMAIL_HOST_FROM=email-host-from
    ```
 
 3. **Install Dependencies**  
@@ -72,3 +77,48 @@ Before starting, make sure that:
 - **Database**: PostgreSQL
 - **Documentation**: Swagger
 - **CI/CD**: GitHub Actions
+
+### For tests, it's necessary be inside the ./src directory
+
+Check the files with the linter
+
+```bash
+golangci-lint run ./...
+```
+
+To correct the .go files following the GO convention, using the linter
+
+```bash
+go fmt ./...
+```
+
+Run all tests and validate the coverage
+
+```bash
+go test -v -coverprofile=coverage_report/coverage.out -covermode=atomic ./...
+```
+
+After execution, convert the generated coverage.out file to .html for better visualization:
+
+```bash
+go tool cover -html=coverage_report/coverage.out -o coverage_report/coverage.html
+```
+
+   - Open the generated HTML report in the browser (on Unix systems such as Linux or MacOS)
+
+         ```bash
+         xdg-open coverage_report/coverage.html
+         ```
+
+   - To MacOS, you can use:
+
+      ```bash
+      open coverage_report/coverage.html
+      ```
+
+   - On Windows, you can simply open the file directly or use:
+
+      ```bash
+      start coverage_report/coverage.html
+      ```
+---

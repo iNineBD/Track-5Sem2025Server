@@ -1,4 +1,4 @@
-name: GolangCI-Lint
+name: GolangCI-Lint and Quick Tests
 
 on:
   push:
@@ -7,11 +7,6 @@ on:
       - 'feature/**'
       - 'hotfix/**'
       - 'release/**'
-  pull_request:
-    branches:
-      - 'sprint-1'
-      - 'sprint-2'
-      - 'sprint-3'
       
 jobs:
   lint:
@@ -19,23 +14,115 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository # Faz checkout do repositório
         uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
         with:
-          go-version: '1.23.4'
+          fetch-depth: 0 # Necessário para o GolangCI-Lint analisar o histórico
 
-      - name: Install GolangCI-Lint
+      - name: Set up Go # Configura o ambiente Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.1'
+          cache: false # Desabilita o cache interno do setup-go (vamos usar manual)
+
+      - name: Cache Go Modules # Cache dos módulos Go
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('src/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install GolangCI-Lint # Instala o GolangCI-Lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.8
           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
-      - name: Ensure Go Modules #Avaliar se os módulos do GO estão configurados corretamente.
+      - name: Format code with gofmt # Formata o código com gofmt
         working-directory: src
-        run: go mod tidy #Irá baixar as dependências.
+        run: go fmt ./...
 
-      - name: Run GolangCI-Lint
+      - name: Ensure Go Modules # Garante que os módulos Go estão em ordem
+        working-directory: src
+        run: go mod tidy -v
+
+      - name: Run GolangCI-Lint # Executa o linter GolangCI
         working-directory: src
         run: golangci-lint run ./...
+
+  quick-test: #Teste rápido para push e validação do programa e alterações.
+    name: Build and Basic Tests with Coverage
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout repository # Faz checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 #  para analise de cobertura
+
+      - name: Set up Go # Configura ambiente Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.1'
+
+      - name: Cache Go modules # Cache dos módulos Go
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies # Baixa dependências Go
+        working-directory: src
+        run: |
+          if [ ! -f go.sum ]; then
+            go mod tidy
+          fi
+          go mod download
+
+      - name: Create .env file # Cria o arquivo .env na raiz do projeto
+        working-directory: src
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > ../.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ../.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ../.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../.env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../.env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../.env
+
+      - name: Create .env file in service # Cria o arquivo .env no pacote service
+        working-directory: src/pkg/service
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" > .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> .env
+
+      - name: Run tests with coverage and generate reports  # Executa testes e gera relatórios de cobertura (.out, .html e .xml)
+        working-directory: src
+        run: |
+          mkdir -p coverage_report
+          PACKAGES=$(go list ./... | grep -v '/dto' | grep -v '/models')
+          go test -v -race -coverprofile=coverage.out -covermode=atomic ${PACKAGES} || true
+          go tool cover -html=coverage.out -o coverage_report/coverage.html
+
+
+      # Faz upload dos relatórios gerados
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage_report/
+
+      # Builda aplicação Go
+      - name: Build application
+        working-directory: src
+        run: go build -v ./...
