@@ -37,7 +37,7 @@ func TestGetMetrics(t *testing.T) {
 		{
 			name: "VALID",
 			args: args{
-				1,
+				1648306,
 				"2025-04-01",
 				"2025-04-30",
 			},
@@ -93,7 +93,7 @@ func TestGetListCardTags(t *testing.T) {
 		{
 			name: "Erro ao executar query",
 			args: args{
-				IDProject: 1,
+				IDProject: 1648306,
 				data1:     time.Now().AddDate(0, 0, -30),
 				data2:     time.Now(),
 			},
@@ -145,7 +145,7 @@ func TestGetListCardsPerUser(t *testing.T) {
 		{
 			name: "Erro ao executar query",
 			args: args{
-				IDProject: 1,
+				IDProject: 1648306,
 				data1:     time.Now().AddDate(0, 0, -30),
 				data2:     time.Now(),
 			},
@@ -198,7 +198,7 @@ func TestGetListCardsPerStatus(t *testing.T) {
 		{
 			name: "Erro ao executar query",
 			args: args{
-				IDProject: 1,
+				IDProject: 1648306,
 				data1:     time.Now().AddDate(0, 0, -30),
 				data2:     time.Now(),
 			},
@@ -249,7 +249,7 @@ func TestGetListCardsRework(t *testing.T) {
 				IDProject    int64
 				data1, data2 time.Time
 			}{
-				1, time.Now().AddDate(0, 0, -7), time.Now(),
+				1648306, time.Now().AddDate(0, 0, -7), time.Now(),
 			},
 			wantReworkCards: nil,
 			wantErr:         gin.H{"error": "erro ao retornar a quantidade de retrabalho por card"},
@@ -297,7 +297,7 @@ func TestGetListCardsStarted(t *testing.T) {
 				IDProject    int64
 				data1, data2 time.Time
 			}{
-				1, time.Now().AddDate(0, -1, 0), time.Now(),
+				1648306, time.Now().AddDate(0, -1648306, 0), time.Now(),
 			},
 			wantStartedCards: nil,
 			wantErr:          gin.H{"error": "erro ao retornar a quantidade de cards criados por projeto"},
@@ -345,7 +345,7 @@ func TestGetListCardsFinished(t *testing.T) {
 				IDProject    int64
 				data1, data2 time.Time
 			}{
-				1, time.Now().AddDate(0, 0, -30), time.Now(),
+				1648306, time.Now().AddDate(0, 0, -30), time.Now(),
 			},
 			wantFinishedCards: nil,
 			wantErr:           gin.H{"error": "erro ao retornar a quantidade de cards finalizados por projet"},
@@ -393,7 +393,7 @@ func TestGetListCardsTimeExecution(t *testing.T) {
 				IDProject    int64
 				data1, data2 time.Time
 			}{
-				2, time.Now().AddDate(0, -1, 0), time.Now(),
+				2, time.Now().AddDate(0, -1648306, 0), time.Now(),
 			},
 			wantTimeExecution: nil,
 			wantErr:           gin.H{"error": "erro ao retornar o tempo de execução dos cards"},
