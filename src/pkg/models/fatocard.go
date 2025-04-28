@@ -10,7 +10,7 @@ type FatoCard struct {
 	DimUser        DimUser    `gorm:"foreignKey;IDUser;references:IDUser"`
 	IDStatus       int64      `json:"id_status"`
 	DimStatus      DimStatus  `gorm:"foreignKey;IDStatus;references:IDStatus"`
-	IDTimeCreated  int64      `json:"id_time_created"`
+	IDTimeCreated  int64      `json:"id_time"`
 	DimTimeCreated DimTime    `gorm:"foreignKey;IDTimeCreated;references:IDTime"`
 	IDTag          int64      `json:"id_tag"`
 	DimTag         DimTag     `gorm:"foreignKey;IDTag;references:IDTag"`
