@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage_report/coverage.out
+          path: coverage_report/
 
       - name: Build application # Builda a aplicação
         working-directory: src
