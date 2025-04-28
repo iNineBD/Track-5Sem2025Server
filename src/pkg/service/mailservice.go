@@ -9,14 +9,13 @@ import (
 )
 
 func SendEmail(to, subject, body string) error {
-	// Configura a mensagem
+
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", config.SMTP.From)
 	msg.SetHeader("To", to)
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body)
 
-	// Configura o dialer
 	dialer := gomail.NewDialer(
 		config.SMTP.Host,
 		config.SMTP.Port,
@@ -24,7 +23,6 @@ func SendEmail(to, subject, body string) error {
 		config.SMTP.Password,
 	)
 
-	// Envia o email
 	if err := dialer.DialAndSend(msg); err != nil {
 		log.Printf("Failed to send email to %s: %v", to, err)
 		return fmt.Errorf("failed to send email: %v", err)

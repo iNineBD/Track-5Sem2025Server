@@ -20,19 +20,17 @@ type EmailConfig struct {
 
 var SMTP *EmailConfig
 
-// Função separada para configurar o middleware CORS
 func CorsConfig() gin.HandlerFunc {
 	return cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Origens permitidas
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           3 * time.Hour, // Tempo de cache da permissão
+		MaxAge:           3 * time.Hour,
 	})
 }
 
-// Função para carregar a variável de ambiente JWT_SECRET
 func LoadJWTKey() (string, error) {
 	err := godotenv.Load()
 	if err != nil {
