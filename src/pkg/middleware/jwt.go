@@ -30,36 +30,6 @@ func GenerateJWT(userID int64, email string, role int64) (string, error) {
 	return token.SignedString([]byte(jwtKey))
 }
 
-// Middleware para validar o token JWT
-func JWTMiddleware() gin.HandlerFunc {
-
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
-			return
-		}
-
-		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
-			jwtKey, err := config.LoadJWTKey()
-			if err != nil {
-				return "erro ao carregar JWT", err
-			}
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
-			}
-			return jwtKey, nil
-		})
-
-		if err != nil || !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
-			return
-		}
-
-		c.Next()
-	}
-}
 func VerifyToken(token string) (*jwt.Token, error) {
 
 	tokenVerify, err := jwt.Parse(token, func(newToken *jwt.Token) (any, error) {
@@ -91,4 +61,24 @@ func DecoteTokenJWT(token string) (jwt.MapClaims, error) {
 	}
 
 	return nil, fmt.Errorf("invali token")
+}
+
+func Auth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+
+		if token == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Não enviado o token JWT"})
+		}
+
+		token = strings.Split(token, " ")[1]
+		claims, err := DecoteTokenJWT(token)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Falha para decodificar token"})
+		}
+
+		c.Set("currentUSer", claims)
+		c.Next()
+	}
 }

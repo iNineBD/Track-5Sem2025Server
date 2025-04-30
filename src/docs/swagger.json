@@ -85,8 +85,13 @@
                 "responses": {}
             }
         },
-        "/projects/data": {
+        "/api/projects/data": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -97,8 +102,13 @@
                 "responses": {}
             }
         },
-        "/statistics/data/{id}": {
+        "/api/statistics/data/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "This endpoint displays all projects based on date range",
                 "produces": [
                     "application/json"

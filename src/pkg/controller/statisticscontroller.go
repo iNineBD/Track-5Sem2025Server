@@ -10,11 +10,12 @@ import (
 // @Summary Display of all projects registered in taiga
 // @Description This endpoint displays all projects based on date range
 // @Tags Statistics
+// @Security BearerAuth
 // @Param id path string true "Id do projeto para busca"
 // @Param data1 query string false "Data de início (formato: YYYY-MM-DD)" example("2025-04-01")
 // @Param data2 query string false "Data de fim (formato: YYYY-MM-DD)" example("2025-04-30")
 // @Produce json
-// @Router /statistics/data/{id} [get]
+// @Router /api/statistics/data/{id} [get]
 func GetStatisticsData(c *gin.Context) {
 
 	var idProject, _ = strconv.ParseInt(c.Param("id"), 10, 64)
