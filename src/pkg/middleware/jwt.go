@@ -1,8 +1,11 @@
 package middleware
 
 import (
+	"errors"
+	"fmt"
 	"inine-track/pkg/config"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -56,4 +59,36 @@ func JWTMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+func VerifyToken(token string) (*jwt.Token, error) {
+
+	tokenVerify, err := jwt.Parse(token, func(newToken *jwt.Token) (any, error) {
+		if _, isValid := newToken.Method.(*jwt.SigningMethodHMAC); !isValid {
+			return nil, fmt.Errorf("unexpected signing method: %v", newToken.Header["alg"])
+		}
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+	if err != nil {
+		err = errors.New("failed to verify token: " + err.Error())
+		return nil, err
+	}
+	return tokenVerify, nil
+}
+
+func DecoteTokenJWT(token string) (jwt.MapClaims, error) {
+
+	tokenVerify, err := VerifyToken(token)
+
+	if err != nil {
+		err = errors.New("failed to decode token " + err.Error())
+		return nil, err
+	}
+
+	claims, isOk := tokenVerify.Claims.(jwt.MapClaims)
+
+	if isOk && tokenVerify.Valid {
+		return claims, nil
+	}
+
+	return nil, fmt.Errorf("invali token")
 }
