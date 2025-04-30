@@ -26,12 +26,12 @@ func HandlleRequest() {
 	protected := r.Group("/api")
 	protected.Use(middleware.JWTMiddleware())
 	{
-		projects := r.Group("/projects")
+		projects := protected.Group("/projects")
 		{
 			projects.GET("/data", controller.GetProjects)
 		}
 
-		statistics := r.Group("/statistics")
+		statistics := protected.Group("/statistics")
 		{
 			statistics.GET("/data/:id", controller.GetStatisticsData)
 		}
