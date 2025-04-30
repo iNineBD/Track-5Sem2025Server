@@ -41,6 +41,7 @@ func HandlleRequest() {
 		}
 
 		statistics := protected.Group("/statistics")
+
 		{
 			statistics.GET("/data/:id", middleware.Auth(), controller.GetStatisticsData)
 		}
