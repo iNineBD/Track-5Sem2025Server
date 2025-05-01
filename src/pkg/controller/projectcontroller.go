@@ -16,13 +16,15 @@ import (
 // @Router /api/projects/data [get]
 func GetProjects(c *gin.Context) {
 
-	_, err := utils.VerifyAndDecodeToken(c)
+	claims, err := utils.VerifyAndDecodeToken(c)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 	}
 
-	status, reponse := service.GetProjects()
+	idUser := int64(claims["user_id"].(float64))
+
+	status, reponse := service.GetProjects(idUser)
 
 	c.JSON(status, reponse)
 }

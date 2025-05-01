@@ -2,6 +2,8 @@ package controller
 
 import (
 	"inine-track/pkg/service"
+	"inine-track/pkg/service/utils"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -18,11 +20,20 @@ import (
 // @Router /api/statistics/data/{id} [get]
 func GetStatisticsData(c *gin.Context) {
 
+	claims, err := utils.VerifyAndDecodeToken(c)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	}
+
+	idRole := int64(claims["role"].(float64))
+	idUser := int64(claims["user_id"].(float64))
+
 	var idProject, _ = strconv.ParseInt(c.Param("id"), 10, 64)
 	var data1 = c.DefaultQuery("data1", "2000-01-01")
 	var data2 = c.DefaultQuery("data2", "2025-01-01")
 
-	status, response := service.GetMetrics(idProject, data1, data2)
+	status, response := service.GetMetrics(idProject, data1, data2, idUser, idRole)
 
-	c.JSON(status, response)
+	c.JSON(int(status), response)
 }
