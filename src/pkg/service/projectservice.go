@@ -5,17 +5,30 @@ import (
 	"inine-track/pkg/dto/projectdto"
 	"inine-track/pkg/models"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GetProjects(idUser int64) (int, gin.H) {
+func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	var listProjects []projectdto.GetProjectsResponse
 	var projects []models.DimProject
 
-	result := database.DB.Raw(`SELECT dc.id_card, dc.name_card FROM fato_cards fc
-    INNER JOIN dim_card dc ON dc.id_card = fc.id_card WHERE fc.id_user = $1
-    GROUP BY dc.id_card`, idUser).Find(&projects)
+	var role_name string
+
+	result := database.DB.Where("idRole = ?", idRole).First(&role_name)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
+	}
+
+	if strings.ToUpper(role_name) == "ADMIN" {
+		result = database.DB.Find(&projects)
+	} else {
+		result = database.DB.Raw(`SELECT dc.id_card, dc.name_card FROM fato_cards fc
+		INNER JOIN dim_card dc ON dc.id_card = fc.id_card WHERE fc.id_user = $1
+		GROUP BY dc.id_card`, idUser).Find(&projects)
+	}
 
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao buscar projetos"}

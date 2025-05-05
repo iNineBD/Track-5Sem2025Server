@@ -23,8 +23,9 @@ func GetProjects(c *gin.Context) {
 	}
 
 	idUser := int64(claims["user_id"].(float64))
+	idRole := int64(claims["role"].(float64))
 
-	status, reponse := service.GetProjects(idUser)
+	status, reponse := service.GetProjects(idUser, idRole)
 
 	c.JSON(status, reponse)
 }
