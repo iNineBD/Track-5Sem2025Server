@@ -96,8 +96,13 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/projects/data": {
+        "/api/projects/data": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -108,8 +113,13 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/statistics/data/{id}": {
+        "/api/statistics/data/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "This endpoint displays all projects based on date range",
                 "produces": [
                     "application/json"

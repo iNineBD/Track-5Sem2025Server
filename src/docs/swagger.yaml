@@ -84,15 +84,17 @@ paths:
       summary: Define nova senha
       tags:
       - Usuário
-  /projects/data:
+  /api/projects/data:
     get:
       produces:
       - application/json
       responses: {}
+      security:
+      - BearerAuth: []
       summary: Display of all projects registered in taiga
       tags:
       - Projects
-  /statistics/data/{id}:
+  /api/statistics/data/{id}:
     get:
       description: This endpoint displays all projects based on date range
       parameters:
@@ -114,6 +116,8 @@ paths:
       produces:
       - application/json
       responses: {}
+      security:
+      - BearerAuth: []
       summary: Display of all projects registered in taiga
       tags:
       - Statistics
