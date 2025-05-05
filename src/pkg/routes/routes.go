@@ -39,7 +39,6 @@ func HandlleRequest() {
 		{
 			projects.GET("/data", middleware.Auth(), controller.GetProjects)
 		}
-
 		statistics := protected.Group("/statistics")
 
 		{
