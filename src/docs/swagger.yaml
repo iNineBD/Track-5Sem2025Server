@@ -121,4 +121,14 @@ paths:
       summary: Display of all projects registered in taiga
       tags:
       - Statistics
+  /api/usermanagement/data:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation user and role
+      tags:
+      - User Management
 swagger: "2.0"

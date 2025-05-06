@@ -153,6 +153,23 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/api/usermanagement/data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "responses": {}
+            }
         }
     },
     "definitions": {

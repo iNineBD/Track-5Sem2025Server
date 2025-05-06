@@ -44,6 +44,10 @@ func HandlleRequest() {
 		{
 			statistics.GET("/data/:id", middleware.Auth(), controller.GetStatisticsData)
 		}
+		usermanagement := protected.Group("/usermanagement")
+		{
+			usermanagement.GET("/data", middleware.Auth(), controller.GetRelationUserRole)
+		}
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
