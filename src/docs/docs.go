@@ -169,6 +169,35 @@ const docTemplate = `{
                 ],
                 "summary": "Display of relation user and role",
                 "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "parameters": [
+                    {
+                        "description": "Dados para atualizar a role do usuário",
+                        "name": "usermanagement",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usermanagementdto.UpdateRelationUserRole"
+                        }
+                    }
+                ],
+                "responses": {}
             }
         }
     },
@@ -212,6 +241,17 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "usermanagementdto.UpdateRelationUserRole": {
+            "type": "object",
+            "properties": {
+                "id_role": {
+                    "type": "integer"
+                },
+                "id_user": {
+                    "type": "integer"
                 }
             }
         }

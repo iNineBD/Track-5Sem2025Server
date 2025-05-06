@@ -27,6 +27,13 @@ definitions:
     - email
     - password
     type: object
+  usermanagementdto.UpdateRelationUserRole:
+    properties:
+      id_role:
+        type: integer
+      id_user:
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
@@ -123,6 +130,24 @@ paths:
       - Statistics
   /api/usermanagement/data:
     get:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation user and role
+      tags:
+      - User Management
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dados para atualizar a role do usuário
+        in: body
+        name: usermanagement
+        required: true
+        schema:
+          $ref: '#/definitions/usermanagementdto.UpdateRelationUserRole'
       produces:
       - application/json
       responses: {}

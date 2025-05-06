@@ -29,3 +29,50 @@ func GetRelationUserRole() (status int, response gin.H) {
 
 	return http.StatusOK, gin.H{"success": listRelationUserRole}
 }
+
+func UpdateRoleUser(idUser int64, idRole int64) (status int, response gin.H) {
+
+	tx := database.DB.Begin()
+
+	if tx.Error != nil {
+		return http.StatusInternalServerError, gin.H{"error": "erro ao iniciar transação"}
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var user models.DimUser
+
+	result := tx.Where("id_user = ?", idUser).First(&user)
+
+	if result.Error != nil {
+		tx.Rollback()
+		return http.StatusBadRequest, gin.H{"error": "usuário não localizado para atualização"}
+	}
+
+	var role models.DimRole
+
+	result = tx.Where("id_role = ?", idRole).First(&role)
+
+	if result.Error != nil {
+		tx.Rollback()
+		return http.StatusBadRequest, gin.H{"error": "função não localizada para atualização"}
+	}
+
+	result = tx.Model(user).Updates(role)
+
+	if result.Error != nil {
+		tx.Rollback()
+		return http.StatusBadRequest, gin.H{"error": "erro ao atualizar a função do usuário"}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return http.StatusInternalServerError, gin.H{"error": "erro ao completar transação"}
+	}
+
+	return http.StatusOK, gin.H{"success": "função atualizada com sucesso"}
+}
