@@ -1,8 +1,16 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Esta é uma API feita para análise de dos projetos no sistema taiga",
+        "title": "API Inine-Track",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
         "/access/firstAccess": {
             "post": {
@@ -92,6 +100,7 @@
                         "BearerAuth": []
                     }
                 ],
+                "description": "This endpoint displays all projects",
                 "produces": [
                     "application/json"
                 ],
@@ -165,6 +174,7 @@
                         "BearerAuth": []
                     }
                 ],
+                "description": "This endpoint displays relation user and role",
                 "consumes": [
                     "application/json"
                 ],
@@ -243,6 +253,13 @@
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

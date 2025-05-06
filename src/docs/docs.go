@@ -103,6 +103,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "This endpoint displays all projects",
                 "produces": [
                     "application/json"
                 ],
@@ -176,6 +177,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "This endpoint displays relation user and role",
                 "consumes": [
                     "application/json"
                 ],
@@ -255,17 +257,24 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
+	Schemes:          []string{"http"},
+	Title:            "API Inine-Track",
+	Description:      "Esta é uma API feita para análise de dos projetos no sistema taiga",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -30,7 +30,7 @@ func GetRelationUserRole(c *gin.Context) {
 }
 
 // @Summary Display of relation user and role
-// @Descripition This endpoint displays relation user and role
+// @Description This endpoint displays relation user and role
 // @Tags User Management
 // @Security BearerAuth
 // @Accept json

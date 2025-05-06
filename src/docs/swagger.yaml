@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   userdto.AuthenticateRequest:
     properties:
@@ -34,8 +35,12 @@ definitions:
       id_user:
         type: integer
     type: object
+host: localhost:8080
 info:
   contact: {}
+  description: Esta é uma API feita para análise de dos projetos no sistema taiga
+  title: API Inine-Track
+  version: "1.0"
 paths:
   /access/firstAccess:
     post:
@@ -93,6 +98,7 @@ paths:
       - Usuário
   /api/projects/data:
     get:
+      description: This endpoint displays all projects
       produces:
       - application/json
       responses: {}
@@ -141,6 +147,7 @@ paths:
     put:
       consumes:
       - application/json
+      description: This endpoint displays relation user and role
       parameters:
       - description: Dados para atualizar a role do usuário
         in: body
@@ -156,4 +163,11 @@ paths:
       summary: Display of relation user and role
       tags:
       - User Management
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

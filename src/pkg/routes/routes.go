@@ -21,6 +21,7 @@ import (
 
 // @securityDefinitions.apikey BearerAuth
 // @in header
+// @type apiKey
 // @name Authorization
 func HandlleRequest() {
 	r := gin.Default()

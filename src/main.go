@@ -7,6 +7,17 @@ import (
 	"log"
 )
 
+// @title API Inine-Track
+// @version 1.0
+// @description Esta é uma API feita para análise de dos projetos no sistema taiga
+// @host localhost:8080
+// @BasePath /
+
+// @schemes http
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 
 	err := database.ConnectDB()
