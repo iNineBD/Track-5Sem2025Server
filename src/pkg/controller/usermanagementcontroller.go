@@ -29,6 +29,26 @@ func GetRelationUserRole(c *gin.Context) {
 
 }
 
+// @Summary Display of relation all role
+// @Descripition This endpoint displays relation all role
+// @Tags User Management
+// @Security BearerAuth
+// @Produce json
+// @Router /api/usermanagement/data/roles [get]
+func GetRoles(c *gin.Context) {
+
+	_, err := utils.VerifyAndDecodeToken(c)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	}
+
+	status, response := service.GetRoles()
+
+	c.JSON(status, response)
+
+}
+
 // @Summary Display of relation user and role
 // @Description This endpoint displays relation user and role
 // @Tags User Management

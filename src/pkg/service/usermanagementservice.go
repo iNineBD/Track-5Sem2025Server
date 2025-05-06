@@ -76,3 +76,21 @@ func UpdateRoleUser(idUser int64, idRole int64) (status int, response gin.H) {
 
 	return http.StatusOK, gin.H{"success": "função atualizada com sucesso"}
 }
+
+func GetRoles() (status int, response gin.H) {
+
+	var roles []models.DimRole
+	var listRoles []usermanagementdto.GetRoles
+
+	result := database.DB.Find(&roles)
+
+	if result.Error != nil {
+		return http.StatusBadRequest, gin.H{"error": "erro ao retornar as roles"}
+	}
+
+	for _, role := range roles {
+		listRoles = append(listRoles, usermanagementdto.GetRoles{IDRole: role.IDRole, NameRole: strings.ToUpper(role.NameRole)})
+	}
+
+	return http.StatusOK, gin.H{"success": listRoles}
+}

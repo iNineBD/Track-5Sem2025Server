@@ -48,6 +48,7 @@ func HandlleRequest() {
 		usermanagement := protected.Group("/usermanagement")
 		{
 			usermanagement.GET("/data", middleware.Auth(), controller.GetRelationUserRole)
+			usermanagement.GET("/data/roles", middleware.Auth(), controller.GetRoles)
 			usermanagement.PUT("/update", middleware.Auth(), controller.UpdateRoleUser)
 		}
 	}

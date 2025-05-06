@@ -7,6 +7,7 @@ import (
 	"inine-track/pkg/middleware"
 	"inine-track/pkg/models"
 	"net/http"
+	"strings"
 	"sync"
 
 	"golang.org/x/crypto/bcrypt"
@@ -39,9 +40,10 @@ func Login(request userdto.LoginRequest) (userdto.GetUserResponse, int) {
 	}
 
 	response.ID = user.IDUser
-	response.NameUser = user.NameUser
+	response.NameUser = strings.ToUpper(user.NameUser)
 	response.Email = user.Email
 	response.Role = user.IDRole
+	response.NameRole = strings.ToUpper(user.DimRole.NameRole)
 	response.Token = token
 
 	return response, http.StatusOK

@@ -201,6 +201,23 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/api/usermanagement/data/roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation all role",
+                "responses": {}
+            }
         }
     },
     "definitions": {
