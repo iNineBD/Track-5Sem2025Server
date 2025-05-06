@@ -39,6 +39,7 @@ func Login(request userdto.LoginRequest) (userdto.GetUserResponse, int) {
 	}
 
 	response.ID = user.IDUser
+	response.NameUser = user.NameUser
 	response.Email = user.Email
 	response.Role = user.IDRole
 	response.Token = token
