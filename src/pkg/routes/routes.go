@@ -41,11 +41,6 @@ func HandlleRequest() {
 			projects.GET("/data", middleware.Auth(), controller.GetProjects)
 		}
 		statistics := protected.Group("/statistics")
-
-<<<<<<< HEAD
-=======
-		statistics := projects.Group("/statistics")
->>>>>>> 8fe8655 (TRK-90 - fix: correcting  middleware protect)
 		{
 			statistics.GET("/data/:id", middleware.Auth(), controller.GetStatisticsData)
 		}
