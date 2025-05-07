@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRole int64) (status int64, response gin.H) {
+func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRole int64) (status int, response gin.H) {
 	var role models.DimRole
 
 	err := utils.GetProject(int64(IDProject))
@@ -49,7 +49,7 @@ func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRol
 	}
 }
 
-func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int64, response gin.H) {
+func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int, response gin.H) {
 	listCardsPerTag, err2 := GetListCardTags(IDProject, data1, data2, idUser)
 
 	if err2 != nil {
