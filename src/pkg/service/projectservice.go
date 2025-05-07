@@ -13,14 +13,14 @@ import (
 func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	var listProjects []projectdto.GetProjectsResponse
 	var projects []models.DimProject
+	var role models.DimRole
 
-	var role_name string
-
-	result := database.DB.Where("idRole = ?", idRole).First(&role_name)
+	result := database.DB.Where("id_role = ?", idRole).First(&role)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
 	}
+	var role_name string = role.NameRole
 
 	if strings.ToUpper(role_name) == "ADMIN" {
 		result = database.DB.Find(&projects)
