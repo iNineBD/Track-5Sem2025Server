@@ -21,6 +21,7 @@ import (
 
 // @securityDefinitions.apikey BearerAuth
 // @in header
+// @type apiKey
 // @name Authorization
 func HandlleRequest() {
 	r := gin.Default()
@@ -40,9 +41,14 @@ func HandlleRequest() {
 			projects.GET("/data", middleware.Auth(), controller.GetProjects)
 		}
 		statistics := protected.Group("/statistics")
-
 		{
 			statistics.GET("/data/:id", middleware.Auth(), controller.GetStatisticsData)
+		}
+		usermanagement := protected.Group("/usermanagement")
+		{
+			usermanagement.GET("/data", middleware.Auth(), controller.GetRelationUserRole)
+			usermanagement.GET("/data/roles", middleware.Auth(), controller.GetRoles)
+			usermanagement.PUT("/update", middleware.Auth(), controller.UpdateRoleUser)
 		}
 	}
 

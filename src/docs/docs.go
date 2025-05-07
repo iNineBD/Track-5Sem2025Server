@@ -103,6 +103,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "This endpoint displays all projects",
                 "produces": [
                     "application/json"
                 ],
@@ -153,6 +154,70 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        },
+        "/api/usermanagement/data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays relation user and role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "parameters": [
+                    {
+                        "description": "Dados para atualizar a role do usuário",
+                        "name": "usermanagement",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usermanagementdto.UpdateRelationUserRole"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/usermanagement/data/roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation all role",
+                "responses": {}
+            }
         }
     },
     "definitions": {
@@ -197,18 +262,36 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "usermanagementdto.UpdateRelationUserRole": {
+            "type": "object",
+            "properties": {
+                "id_role": {
+                    "type": "integer"
+                },
+                "id_user": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
+	Schemes:          []string{"http"},
+	Title:            "API Inine-Track",
+	Description:      "Esta é uma API feita para análise de dos projetos no sistema taiga",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

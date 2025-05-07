@@ -9,7 +9,7 @@ import (
 )
 
 // @Summary Display of all projects registered in taiga
-// @Descripition This endpoint displays all projects
+// @Description This endpoint displays all projects
 // @Tags Projects
 // @Security BearerAuth
 // @Produce json

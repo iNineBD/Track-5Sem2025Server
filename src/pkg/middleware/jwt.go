@@ -60,18 +60,18 @@ func DecoteTokenJWT(token string) (jwt.MapClaims, error) {
 		return claims, nil
 	}
 
-	return nil, fmt.Errorf("invali token")
+	return nil, fmt.Errorf("invalid token")
 }
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
-
 		if token == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Não enviado o token JWT"})
 		}
 
 		token = strings.Split(token, " ")[1]
+
 		claims, err := DecoteTokenJWT(token)
 
 		if err != nil {
