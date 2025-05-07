@@ -3,6 +3,7 @@ package service
 import (
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/statisticsdto"
+	"inine-track/pkg/models"
 	"inine-track/pkg/service/utils"
 	"net/http"
 	"strings"
@@ -13,6 +14,7 @@ import (
 )
 
 func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRole int64) (status int64, response gin.H) {
+	var role models.DimRole
 
 	err := utils.GetProject(int64(IDProject))
 
@@ -20,13 +22,13 @@ func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRol
 		return http.StatusBadRequest, gin.H{"error": err.Error()}
 	}
 
-	var role_name string
-
-	result := database.DB.Where("idRole = ?", idRole).First(&role_name)
+	result := database.DB.Where("id_role = ?", idRole).First(&role)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
 	}
+
+	var role_name string = role.NameRole
 
 	t1, t2, err := utils.FormateDate(data1, data2)
 

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"inine-track/pkg/database"
 	"inine-track/pkg/dto/projectdto"
 	"inine-track/pkg/models"
@@ -30,6 +31,8 @@ func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 		GROUP BY dc.id_card`, idUser).Find(&projects)
 	}
 
+	fmt.Println(projects)
+
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao buscar projetos"}
 	}
@@ -39,8 +42,10 @@ func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	}
 
 	for _, p := range projects {
-		var project projectdto.GetProjectsResponse = projectdto.GetProjectsResponse{ID: p.IDProject, Name: p.NameProject, Description: p.Description}
-		listProjects = append(listProjects, project)
+		if p.IDProject != 0 {
+			var project projectdto.GetProjectsResponse = projectdto.GetProjectsResponse{ID: p.IDProject, Name: p.NameProject, Description: p.Description}
+			listProjects = append(listProjects, project)
+		}
 	}
 
 	return http.StatusOK, gin.H{"success": listProjects}
