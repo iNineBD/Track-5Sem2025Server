@@ -121,9 +121,9 @@ func GetListCardsPerUser(IDProject int64, data1 time.Time, data2 time.Time, idUs
 	var result *gorm.DB
 
 	if idUser == 0 {
-		result = database.DB.Raw(`select * from get_qtd_por_colaborador($1,$2,$3)`, IDProject, data1, data2).Find(&listCardsPerUser)
+		result = database.DB.Raw(`select * from get_qtd_cards_por_colaborador($1,$2,$3)`, IDProject, data1, data2).Find(&listCardsPerUser)
 	} else {
-		result = database.DB.Raw(`select * from get_qtd_por_colaborador_operador($1,$2,$3,$4)`, IDProject, data1, data2, idUser).Find(&listCardsPerUser)
+		result = database.DB.Raw(`select * from get_qtd_cards_por_colaborador_operador($1,$2,$3,$4)`, IDProject, data1, data2, idUser).Find(&listCardsPerUser)
 	}
 
 	if result.Error != nil {
