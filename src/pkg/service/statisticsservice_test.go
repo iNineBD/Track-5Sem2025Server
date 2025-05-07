@@ -25,6 +25,17 @@ func TestGetListCardTags_AdminUser(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
 	t.Logf("Resultado (Admin): %+v", result)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	result, err = GetListCardTags(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, result)
+	t.Logf("Resultado (Admin): %+v", result)
 }
 
 // Teste para GetListCardTags com operador (idUser > 0)
@@ -38,6 +49,17 @@ func TestGetListCardTags_OperatorUser(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
+	t.Logf("Resultado (Operador): %+v", result)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	result, err = GetListCardTags(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, result)
 	t.Logf("Resultado (Operador): %+v", result)
 }
 
@@ -53,6 +75,18 @@ func TestGetMetricsRole_Admin(t *testing.T) {
 	assert.Equal(t, http.StatusOK, status)
 	assert.NotNil(t, response["success"])
 	t.Logf("Response (Admin): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Admin): %+v", response)
+
 }
 
 // Teste para GetMetrics com ADMIN
@@ -68,6 +102,17 @@ func TestGetMetrics_AdminRole(t *testing.T) {
 	assert.Equal(t, http.StatusOK, status)
 	assert.NotNil(t, response["success"])
 	t.Logf("Response (Admin Role): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Admin Role): %+v", response)
 }
 
 // Teste para GetMetrics com OPERADOR
@@ -83,4 +128,15 @@ func TestGetMetrics_OperatorRole(t *testing.T) {
 	assert.Equal(t, http.StatusOK, status)
 	assert.NotNil(t, response["success"])
 	t.Logf("Response (Operador Role): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Operador Role): %+v", response)
 }
