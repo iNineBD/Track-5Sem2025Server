@@ -1,86 +1,141 @@
 
-# 🧪 Documentação de Testes - Pacote `service`
+# 📦 Documentação de Testes — `service_test.go`
 
-Este documento descreve a estrutura, dependências e instruções para implementação e execução de testes no pacote `service` do projeto **inine-track**.
+Este documento descreve os testes unitários implementados para o pacote `service`, incluindo estrutura do projeto, bibliotecas utilizadas, explicação dos testes existentes e instruções para escrever novos testes.
 
-## 📂 Estrutura do Projeto
+---
+
+## 🗂 Estrutura do Projeto
 
 ```
 project-root/
 │
 ├── service/
-│   └── service_test.go       # Arquivo com testes unitários
+│   └── service_test.go  # Arquivo de testes unitários
 │
 ├── pkg/
 │   └── database/
-│       └── connection.go     # Função ConnectDB() usada para conectar ao banco
+│       └── connection.go  # Define a função ConnectDB()
 ```
 
-⚠️ **Importante:** Certifique-se de que o banco esteja ativo e populado com os dados exigidos pelos testes (usuários, projetos, papéis, etc.).
+⚠️ **Importante**: Certifique-se de que o banco esteja ativo e populado com os dados exigidos pelos testes (usuários, projetos, papéis, etc.).
+
+---
+
+## 📚 Bibliotecas Utilizadas
+
+| Biblioteca                         | Uso                                                                 |
+|------------------------------------|---------------------------------------------------------------------|
+| `testing` (Go padrão)              | Estrutura base para definição de testes (`t *testing.T`)            |
+| `github.com/stretchr/testify/assert` | Biblioteca externa para asserções mais legíveis e robustas         |
+
+Para instalar o `testify`:
+```bash
+go get github.com/stretchr/testify
+```
+
+---
 
 ## ✅ Testes Implementados
 
-### `TestGetListCardTags_AdminUser`
+### 🔹 `TestGetListCardTags_AdminUser`
+- Testa a função `GetListCardTags` para um usuário administrador (`idUser = 0`).
+- Verifica:
+  - Se o resultado é retornado corretamente com dados válidos.
+  - Se a função trata erros adequadamente quando recebe IDs inválidos.
 
-Testa a função `GetListCardTags` para usuário admin (`idUser = 0`).  
-Verifica se o retorno é válido e se o erro é tratado corretamente com IDs inválidos.
+---
 
-### `TestGetListCardTags_OperatorUser`
+### 🔹 `TestGetListCardTags_OperatorUser`
+- Testa `GetListCardTags` para um operador (`idUser > 0`).
+- Verifica comportamento com dados válidos e inválidos.
 
-Testa a função `GetListCardTags` para usuário operador (`idUser > 0`).  
-Também cobre cenários com entradas inválidas.
+---
 
-### `TestGetMetricsRole_Admin`
+### 🔹 `TestGetMetricsRole_Admin`
+- Testa a função `GetMetricsRole` para admin.
+- Garante que:
+  - Retorna `http.StatusOK` e resposta válida quando os dados estão corretos.
+  - Retorna `http.StatusBadRequest` com erro no caso de IDs inexistentes.
 
-Testa `GetMetricsRole` para admin.  
-Valida resposta esperada e tratamento de erro quando IDs não existem.
+---
 
-### `TestGetMetrics_AdminRole`
+### 🔹 `TestGetMetrics_AdminRole`
+- Testa `GetMetrics` com role “ADMIN”.
+- Garante retorno correto com `idRole` real do banco.
+- Também cobre caso com dados inválidos.
 
-Testa `GetMetrics` com role `"ADMIN"`.  
-Usa `idRole` existente no banco.  
-Testa cenário válido e erro com IDs incorretos.
+---
 
-### `TestGetMetrics_OperatorRole`
+### 🔹 `TestGetMetrics_OperatorRole`
+- Testa `GetMetrics` com role “OPERADOR” (ou outro papel não-admin).
+- Verifica resposta correta e tratamento de erro com parâmetros inválidos.
 
-Testa `GetMetrics` com role `"OPERADOR"` (ou outro papel não-admin).  
-Também valida comportamento com parâmetros inválidos.
+---
+
+## 🛠 Como Criar um Teste Unitário em Go
+
+### Exemplo básico com `testing` e `assert`
+```go
+import (
+    "testing"
+    "github.com/stretchr/testify/assert"
+)
+
+func TestMinhaFuncao(t *testing.T) {
+    // Chamada da função que será testada
+    resultado, err := MinhaFuncao("entrada")
+
+    // Verificações com assert
+    assert.Nil(t, err, "Esperava erro nulo")
+    assert.Equal(t, "resultado esperado", resultado)
+}
+```
+
+### Estrutura de um teste padrão
+1. Nome da função de teste: `Test<NomeFuncionalidade>`
+2. Inicializa os dados de entrada.
+3. Chama a função alvo.
+4. Usa `assert.Nil`, `assert.NotNil`, `assert.Equal`, etc., para validar.
+5. Opcional: usa `t.Logf(...)` para debug/log.
+
+---
 
 ## 🔧 Pré-Requisitos
 
 - Go 1.18 ou superior  
-- Banco de dados configurado e com dados esperados  
-- Módulo Go corretamente inicializado com `go mod init` e dependências instaladas
+- Banco de dados configurado e populado com os dados esperados  
+- Módulo Go inicializado (`go mod init`)  
+- Dependências instaladas:  
+```bash
+go mod tidy
+```
+
+---
 
 ## 🚀 Como Executar os Testes
 
 Para rodar todos os testes do projeto:
-
 ```bash
 go test ./...
 ```
 
-Para rodar apenas os testes do pacote `service`:
-
+Para rodar apenas os testes do arquivo `service_test.go`:
 ```bash
-go test ./service
+go test ./service -v
 ```
 
-Para obter saídas detalhadas de log:
+---
 
-```bash
-go test -v ./service
-```
+## 🧪 Dicas para Expandir os Testes
 
-## 📌 Observações
+- Sempre valide casos **felizes (happy path)** e **casos de erro**.
+- Use `t.Run("descrição", func(t *testing.T) {...})` para subtestes.
+- Crie funções auxiliares para montar dados repetitivos (ex: datas, IDs).
+- Prefira `assert` ao invés de `if t.Errorf` para clareza.
 
-- Certifique-se de que os IDs utilizados nos testes (`IDProject`, `idUser`, `idRole`) estejam presentes no banco.
-- IDs como `99999999999` são utilizados intencionalmente para simular falhas e testar o tratamento de erros.
-- As datas usadas são dinâmicas (`time.Now()`) para garantir atualidade nos testes.
-- Os testes assumem que os papéis "ADMIN", "OPERADOR", etc., estão devidamente cadastrados no banco com os respectivos `idRole`.
+---
 
-## 📈 Sugestões Futuras
+## 📌 Conclusão
 
-- Implementar mocks para evitar dependência direta com o banco de dados.
-- Separar testes de unidade e testes de integração.
-- Utilizar bibliotecas como `gomock`, `testify/mock` ou `testcontainers` para simular banco em memória ou containers.
+Este documento serve como base para quem desejar manter ou expandir os testes do serviço. Siga o padrão estabelecido e mantenha sempre cobertura para os principais fluxos e erros possíveis.
