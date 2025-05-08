@@ -1,5 +1,5 @@
 
-# 📦 Documentação de Testes — `service_test.go`
+# 📦 Documentação de Testes
 
 Este documento descreve os testes unitários implementados para o pacote `service`, incluindo estrutura do projeto, bibliotecas utilizadas, explicação dos testes existentes e instruções para escrever novos testes.
 
@@ -11,7 +11,7 @@ Este documento descreve os testes unitários implementados para o pacote `servic
 project-root/
 │
 ├── service/
-│   └── service_test.go  # Arquivo de testes unitários
+│   └── statisticsservice_test.go  # Arquivo de testes unitários
 │
 ├── pkg/
 │   └── database/
