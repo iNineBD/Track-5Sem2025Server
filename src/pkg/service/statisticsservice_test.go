@@ -121,7 +121,7 @@ func TestGetMetrics_OperatorRole(t *testing.T) {
 	data1 := time.Now().AddDate(-1, -1, -7).Format("2006-01-02")
 	data2 := time.Now().Format("2006-01-02")
 	idUser := int64(759690)
-	idRole := int64(9965610) // deve estar no banco com NameRole = "OPERADOR" ou outro que não seja ADMIN ou GESTOR
+	idRole := int64(9965610) // deve estar no banco com outro nome que não seja ADMIN ou GESTOR
 
 	status, response := GetMetrics(IDProject, data1, data2, idUser, idRole)
 
