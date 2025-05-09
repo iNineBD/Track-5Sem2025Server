@@ -136,7 +136,6 @@ go test ./service -v
 ## 🧪 Dicas para Expandir os Testes
 
 - Sempre valide casos **felizes (happy path)** e **casos de erro**.
-- Use `t.Run("descrição", func(t *testing.T) {...})` para subtestes.
 - Crie funções auxiliares para montar dados repetitivos (ex: datas, IDs).
 - Prefira `assert` ao invés de `if t.Errorf` para clareza.
 
