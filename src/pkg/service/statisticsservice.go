@@ -194,6 +194,7 @@ func GetListCardsFinished(IDProject int64, data1 time.Time, data2 time.Time, idU
 		result = database.DB.Raw(`select * from get_qtd_cards_criados_por_projeto_operador($1,$2,$3,$4)`, IDProject, data1, data2, idUser).Find(&listCardsFinished)
 	}
 
+
 	if result.Error != nil {
 		return nil, gin.H{"error": "erro ao retornar a quantidade de cards finalizados por projet"}
 	}
