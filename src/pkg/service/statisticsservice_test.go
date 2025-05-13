@@ -2,130 +2,141 @@ package service
 
 import (
 	"inine-track/pkg/database"
-	"log"
+	"net/http"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGetCardsPerStatus(t *testing.T) {
-	err := database.ConnectDB()
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	type args struct {
-		IDProject int
-	}
-	tests := []struct {
-		name       string
-		args       args
-		wantStatus int
-	}{
-		{
-			name: "VALID",
-			args: args{
-				4,
-			},
-			wantStatus: 200,
-		}, {
-			name: "INVALID",
-			args: args{
-				999999999,
-			},
-			wantStatus: 400,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-
-			gotStatus, _ := GetCardsPerStatus(tt.args.IDProject)
-
-			// Verifica o status retornado
-			if gotStatus != tt.wantStatus {
-				t.Errorf("GetCardsPerStatus() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
-			}
-
-		})
-	}
+func init() {
+	database.ConnectDB()
 }
 
-func TestGetCardsPerUser(t *testing.T) {
+// Teste para GetListCardTags com admin (idUser = 0)
+func TestGetListCardTags_AdminUser(t *testing.T) {
+	IDProject := int64(1)
+	idUser := int64(0)
+	data1 := time.Now().AddDate(0, 0, -7)
+	data2 := time.Now()
 
-	err := database.ConnectDB()
+	result, err := GetListCardTags(IDProject, data1, data2, idUser)
 
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	assert.Nil(t, err)
+	assert.NotNil(t, result)
+	t.Logf("Resultado (Admin): %+v", result)
 
-	type args struct {
-		IDProject int
-	}
-	tests := []struct {
-		name       string
-		args       args
-		wantStatus int
-	}{
-		// TODO: Add test cases.
-		{
-			name: "VALID",
-			args: args{
-				4,
-			},
-			wantStatus: 200,
-		}, {
-			name: "INVALID",
-			args: args{
-				999999999,
-			},
-			wantStatus: 400,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerUser(tt.args.IDProject)
-			if gotStatus != tt.wantStatus {
-				t.Errorf("GetCardsPerUser() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
-			}
-		})
-	}
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	result, err = GetListCardTags(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, result)
+	t.Logf("Resultado (Admin): %+v", result)
 }
 
-func TestGetCardsPerTag(t *testing.T) {
+// Teste para GetListCardTags com operador (idUser > 0)
+func TestGetListCardTags_OperatorUser(t *testing.T) {
+	IDProject := int64(1)
+	idUser := int64(5)
+	data1 := time.Now().AddDate(0, 0, -7)
+	data2 := time.Now()
 
-	err := database.ConnectDB()
+	result, err := GetListCardTags(IDProject, data1, data2, idUser)
 
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	type args struct {
-		IDProject int
-	}
-	tests := []struct {
-		name       string
-		args       args
-		wantStatus int
-	}{
-		// TODO: Add test cases.
-		{
-			name: "VALID",
-			args: args{
-				4,
-			},
-			wantStatus: 200,
-		}, {
-			name: "INVALID",
-			args: args{
-				999999999,
-			},
-			wantStatus: 400,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, _ := GetCardsPerTag(tt.args.IDProject)
-			if gotStatus != tt.wantStatus {
-				t.Errorf("GetCardsPerTag() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
-			}
-		})
-	}
+	assert.Nil(t, err)
+	assert.NotNil(t, result)
+	t.Logf("Resultado (Operador): %+v", result)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	result, err = GetListCardTags(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, result)
+	t.Logf("Resultado (Operador): %+v", result)
+}
+
+// Teste para GetMetricsRole com admin
+func TestGetMetricsRole_Admin(t *testing.T) {
+	IDProject := int64(1)
+	idUser := int64(0)
+	data1 := time.Now().AddDate(0, 0, -7)
+	data2 := time.Now()
+
+	status, response := GetMetricsRole(IDProject, data1, data2, idUser)
+
+	assert.Equal(t, http.StatusOK, status)
+	assert.NotNil(t, response["success"])
+	t.Logf("Response (Admin): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Admin): %+v", response)
+
+}
+
+// Teste para GetMetrics com ADMIN
+func TestGetMetrics_AdminRole(t *testing.T) {
+	IDProject := int64(1648306)
+	data1 := time.Now().AddDate(-1, -1, -7).Format("2006-01-02")
+	data2 := time.Now().Format("2006-01-02")
+	idUser := int64(2)
+	idRole := int64(9965612) // deve estar no banco com NameRole = "ADMIN"
+
+	status, response := GetMetrics(IDProject, data1, data2, idUser, idRole)
+
+	assert.Equal(t, http.StatusOK, status)
+	assert.NotNil(t, response["success"])
+	t.Logf("Response (Admin Role): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Admin Role): %+v", response)
+}
+
+// Teste para GetMetrics com OPERADOR
+func TestGetMetrics_OperatorRole(t *testing.T) {
+	IDProject := int64(1648306)
+	data1 := time.Now().AddDate(-1, -1, -7).Format("2006-01-02")
+	data2 := time.Now().Format("2006-01-02")
+	idUser := int64(759690)
+	idRole := int64(9965610) // deve estar no banco com outro nome que não seja ADMIN ou GESTOR
+
+	status, response := GetMetrics(IDProject, data1, data2, idUser, idRole)
+
+	assert.Equal(t, http.StatusOK, status)
+	assert.NotNil(t, response["success"])
+	t.Logf("Response (Operador Role): %+v", response)
+
+	IDProjectComErro := int64(99999999999)
+	idUserComErro := int64(99999999999)
+	data1ComErro := time.Now().AddDate(0, 0, -7)
+	data2ComErro := time.Now()
+
+	status, response = GetMetricsRole(IDProjectComErro, data1ComErro, data2ComErro, idUserComErro)
+
+	assert.NotNil(t, response["error"])
+	assert.Equal(t, http.StatusBadRequest, status)
+	t.Logf("Resultado (Operador Role): %+v", response)
 }

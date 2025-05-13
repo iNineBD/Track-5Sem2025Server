@@ -1,26 +1,183 @@
+basePath: /
+definitions:
+  userdto.AuthenticateRequest:
+    properties:
+      email:
+        type: string
+      newPassword:
+        type: string
+      token:
+        type: string
+    required:
+    - email
+    - newPassword
+    - token
+    type: object
+  userdto.FirstAccessRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  userdto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  usermanagementdto.UpdateRelationUserRole:
+    properties:
+      id_role:
+        type: integer
+      id_user:
+        type: integer
+    type: object
+host: localhost:8080
 info:
   contact: {}
+  description: Esta é uma API feita para análise de dos projetos no sistema taiga
+  title: API Inine-Track
+  version: "1.0"
 paths:
-  /projects/data:
-    get:
+  /access/firstAccess:
+    post:
+      consumes:
+      - application/json
+      description: Gera token para primeiro acesso e envia por email
+      parameters:
+      - description: Email do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userdto.FirstAccessRequest'
       produces:
       - application/json
       responses: {}
+      summary: Primeiro acesso do usuário
+      tags:
+      - Usuário
+  /access/login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica o usuário com email e senha e retorna um token JWT
+      parameters:
+      - description: Credenciais de login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userdto.LoginRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Realiza o login de um usuário
+      tags:
+      - Usuário
+  /access/setPassword:
+    post:
+      consumes:
+      - application/json
+      description: Valida o token e define uma nova senha para o usuário
+      parameters:
+      - description: Token e nova senha
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userdto.AuthenticateRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Define nova senha
+      tags:
+      - Usuário
+  /api/projects/data:
+    get:
+      description: This endpoint displays all projects
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
       summary: Display of all projects registered in taiga
       tags:
       - Projects
-  /statistics/data/{id}:
+  /api/statistics/data/{id}:
     get:
+      description: This endpoint displays all projects based on date range
       parameters:
       - description: Id do projeto para busca
         in: path
         name: id
         required: true
         type: string
+      - description: 'Data de início (formato: YYYY-MM-DD)'
+        example: '"2025-04-01"'
+        in: query
+        name: data1
+        type: string
+      - description: 'Data de fim (formato: YYYY-MM-DD)'
+        example: '"2025-04-30"'
+        in: query
+        name: data2
+        type: string
       produces:
       - application/json
       responses: {}
+      security:
+      - BearerAuth: []
       summary: Display of all projects registered in taiga
       tags:
       - Statistics
+  /api/usermanagement/data:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation user and role
+      tags:
+      - User Management
+    put:
+      consumes:
+      - application/json
+      description: This endpoint displays relation user and role
+      parameters:
+      - description: Dados para atualizar a role do usuário
+        in: body
+        name: usermanagement
+        required: true
+        schema:
+          $ref: '#/definitions/usermanagementdto.UpdateRelationUserRole'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation user and role
+      tags:
+      - User Management
+  /api/usermanagement/data/roles:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation all role
+      tags:
+      - User Management
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

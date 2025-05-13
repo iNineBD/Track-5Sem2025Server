@@ -1,11 +1,106 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "Esta é uma API feita para análise de dos projetos no sistema taiga",
+        "title": "API Inine-Track",
+        "contact": {},
+        "version": "1.0"
     },
+    "host": "localhost:8080",
+    "basePath": "/",
     "paths": {
-        "/projects/data": {
+        "/access/firstAccess": {
+            "post": {
+                "description": "Gera token para primeiro acesso e envia por email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Primeiro acesso do usuário",
+                "parameters": [
+                    {
+                        "description": "Email do usuário",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.FirstAccessRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/access/login": {
+            "post": {
+                "description": "Autentica o usuário com email e senha e retorna um token JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Realiza o login de um usuário",
+                "parameters": [
+                    {
+                        "description": "Credenciais de login",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/access/setPassword": {
+            "post": {
+                "description": "Valida o token e define uma nova senha para o usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuário"
+                ],
+                "summary": "Define nova senha",
+                "parameters": [
+                    {
+                        "description": "Token e nova senha",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userdto.AuthenticateRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/projects/data": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays all projects",
                 "produces": [
                     "application/json"
                 ],
@@ -16,8 +111,14 @@
                 "responses": {}
             }
         },
-        "/statistics/data/{id}": {
+        "/api/statistics/data/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays all projects based on date range",
                 "produces": [
                     "application/json"
                 ],
@@ -32,10 +133,150 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-01\"",
+                        "description": "Data de início (formato: YYYY-MM-DD)",
+                        "name": "data1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"2025-04-30\"",
+                        "description": "Data de fim (formato: YYYY-MM-DD)",
+                        "name": "data2",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
             }
+        },
+        "/api/usermanagement/data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays relation user and role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation user and role",
+                "parameters": [
+                    {
+                        "description": "Dados para atualizar a role do usuário",
+                        "name": "usermanagement",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usermanagementdto.UpdateRelationUserRole"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/usermanagement/data/roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation all role",
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "userdto.AuthenticateRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "newPassword",
+                "token"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "newPassword": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "userdto.FirstAccessRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "userdto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "usermanagementdto.UpdateRelationUserRole": {
+            "type": "object",
+            "properties": {
+                "id_role": {
+                    "type": "integer"
+                },
+                "id_user": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

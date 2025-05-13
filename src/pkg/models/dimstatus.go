@@ -1,10 +1,8 @@
 package models
 
 type DimStatus struct {
-	ID        int64  `json:"id" gorm:"primaryKey;autoIncrement"`
-	Name      string `json:"name"`
-	IDCard    int64  `json:"id_card"`
-	IDProject int64  `json:"id_project"`
+	IDStatus   int64  `json:"id_status" gorm:"primaryKey;autoIncrement"`
+	NameStatus string `json:"name_status"`
 }
 
 func (DimStatus) TableName() string {

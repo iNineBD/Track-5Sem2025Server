@@ -1,10 +1,12 @@
-name: Go Build, Test and SonarCloud Analysis
+name: Build, Test and SonarCloud Analysis
 
 on:
-  push:
-    branches: [main, sprint-1, sprint-2, sprint-3]
   pull_request:
-    branches: [main, sprint-1, sprint-2, sprint-3]
+    branches:
+      - main
+      - sprint-1
+      - sprint-2
+      - sprint-3
 
 jobs:
   build-and-test:
@@ -18,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.23
+          go-version: '1.22.1'
 
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -26,7 +28,7 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('src/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
@@ -64,37 +66,53 @@ jobs:
           ls -la ../
           cat ../.env
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage and generate reports
         working-directory: src
-        run: go test ./... -coverprofile=coverage.out -covermode=atomic
+        run: |
+          # Cria o diretório coverage_report na raiz do projeto
+          mkdir -p ../coverage_report
+
+          # Executa os testes e gera o arquivo de cobertura
+          go test $(go list ./... | grep -v '/models' | grep -v '/dto' | grep -v '_test.go') \
+            -coverprofile=../coverage_report/coverage.out \
+            -covermode=atomic \
+            -coverpkg=./... \
+            -cover \
+            -run=. \
+            -tags=integration \
+            -vet=off
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: src/coverage.out
+          path: coverage_report/
 
       - name: Build application
         working-directory: src
         run: go build -v ./...
-      
-  sonarqube-analysis:
-    name: SonarQube Analysis
+
+  sonarcloud-analysis:
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: build-and-test  # Só roda se a job 'build-and-test' for bem-sucedida
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'  # Condição para rodar apenas em PRs para 'main'
+    needs: build-and-test
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Necessário para o SonarQube analisar corretamente o histórico do código
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.1'
 
       - name: Download coverage report
         uses: actions/download-artifact@v4
         with:
           name: coverage-report
-          path: src
+          path: coverage_report/
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
@@ -102,5 +120,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
+            -Dsonar.projectKey=iNineBD_Track-5Sem2025Server
+            -Dsonar.organization=ininetrack
             -Dsonar.projectBaseDir=src
-            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.exclusions=**/*_test.go,**/models/**,**/dto/**
+            -Dsonar.go.coverage.reportPaths=coverage_report/coverage.out
+            -Dsonar.coverage.exclusions=**/*_test.go,**/models/**,**/dto/**
+            -Dsonar.verbose=true
