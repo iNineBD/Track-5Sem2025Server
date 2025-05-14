@@ -144,6 +144,17 @@ paths:
       summary: Display of relation user and role
       tags:
       - User Management
+  /api/usermanagement/data/roles:
+    get:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of relation all role
+      tags:
+      - User Management
+  /api/usermanagement/update:
     put:
       consumes:
       - application/json
@@ -161,16 +172,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Display of relation user and role
-      tags:
-      - User Management
-  /api/usermanagement/data/roles:
-    get:
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: Display of relation all role
       tags:
       - User Management
 schemes:

@@ -56,7 +56,7 @@ func GetRoles(c *gin.Context) {
 // @Accept json
 // @Param usermanagement body usermanagementdto.UpdateRelationUserRole true "Dados para atualizar a role do usuário"
 // @Produce json
-// @Router /api/usermanagement/data [put]
+// @Router /api/usermanagement/update [put]
 func UpdateRoleUser(c *gin.Context) {
 
 	_, err := utils.VerifyAndDecodeToken(c)

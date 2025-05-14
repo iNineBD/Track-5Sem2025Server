@@ -170,7 +170,26 @@ const docTemplate = `{
                 ],
                 "summary": "Display of relation user and role",
                 "responses": {}
-            },
+            }
+        },
+        "/api/usermanagement/data/roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Display of relation all role",
+                "responses": {}
+            }
+        },
+        "/api/usermanagement/update": {
             "put": {
                 "security": [
                     {
@@ -199,23 +218,6 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
-            }
-        },
-        "/api/usermanagement/data/roles": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Display of relation all role",
                 "responses": {}
             }
         }
