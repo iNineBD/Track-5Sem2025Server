@@ -17,6 +17,7 @@ Este documento descreve os testes unitários implementados para o pacote `servic
 
 🔁 *Essa responsabilidade compartilhada fortalece a cultura de testes e promove mais confiabilidade no ciclo de desenvolvimento contínuo.*
 
+- **Quais unidades sertão testadas**: Serão testadas as unidades fundamentais do back-end responsáveis pela lógica de negócio, garantindo que o comportamento implementado esteja de acordo com as regras definidas. Isso inclui, por exemplo, métodos que retornam métricas específicas de acordo com a role do usuário, validam permissões ou executam cálculos essenciais para a aplicação.
 ---
 
 ## 🗂 Estrutura do Projeto
