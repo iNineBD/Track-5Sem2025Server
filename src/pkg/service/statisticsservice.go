@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRole int64) (status int64, response gin.H) {
+func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRole int64) (status int, response gin.H) {
 	var role models.DimRole
 
 	err := utils.GetProject(int64(IDProject))
@@ -44,7 +44,7 @@ func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRol
 	return status, response
 }
 
-func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int64, response gin.H) {
+func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int, response gin.H) {
 	listCardsPerTag, err2 := GetListCardTags(IDProject, data1, data2, idUser)
 
 	if err2 != nil {
@@ -188,6 +188,7 @@ func GetListCardsFinished(IDProject int64, data1 time.Time, data2 time.Time, idU
 	} else {
 		result = database.DB.Raw(`select * from get_qtd_cards_criados_por_projeto_operador($1,$2,$3,$4)`, IDProject, data1, data2, idUser).Find(&listCardsFinished)
 	}
+
 
 	if result.Error != nil {
 		return nil, gin.H{"error": "erro ao retornar a quantidade de cards finalizados por projet"}

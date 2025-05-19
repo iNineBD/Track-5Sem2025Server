@@ -26,9 +26,9 @@ func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	if strings.ToUpper(roleName) == "ADMIN" {
 		result = database.DB.Find(&projects)
 	} else {
-		result = database.DB.Raw(`SELECT dc.id_card, dc.name_card FROM fato_cards fc
-		INNER JOIN dim_card dc ON dc.id_card = fc.id_card WHERE fc.id_user = $1
-		GROUP BY dc.id_card`, idUser).Find(&projects)
+		result = database.DB.Raw(`SELECT dp.id_project, dp.name_project, dp.description FROM fato_cards fc
+		INNER JOIN dim_project dp ON fc.id_project = dp.id_project WHERE fc.id_user = $1
+		GROUP BY dp.id_project`, idUser).Find(&projects)
 	}
 
 	fmt.Println(projects)
