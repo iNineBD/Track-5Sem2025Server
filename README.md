@@ -103,7 +103,13 @@ go fmt ./...
 Run all tests and validate the coverage
 
 ```bash
-go test -v -coverprofile=coverage_report/coverage.out -covermode=atomic ./...
+go test -v -coverprofile=coverage.out -covermode=atomic ./...
+```
+
+Run tests excluding models and dto
+
+```bash
+go test -v $(go list ./... | grep -Ev 'models|dto') -coverprofile=coverage.out -covermode=atomic
 ```
 
 After execution, convert the generated coverage.out file to .html for better visualization:
