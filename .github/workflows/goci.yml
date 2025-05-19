@@ -50,7 +50,7 @@ jobs:
         run: golangci-lint run ./...
 
   quick-test: #Teste rápido para push e validação do programa e alterações.
-    name: Build and Basic Tests with Coverage
+    name: Build and Basic Tests
     runs-on: ubuntu-latest
     needs: lint
 
