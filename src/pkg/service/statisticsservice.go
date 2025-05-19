@@ -17,36 +17,31 @@ func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRol
 	var role models.DimRole
 
 	err := utils.GetProject(int64(IDProject))
-
 	if err != nil {
 		return http.StatusBadRequest, gin.H{"error": err.Error()}
 	}
 
 	result := database.DB.Where("id_role = ?", idRole).First(&role)
-
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
 	}
 
-	var role_name string = role.NameRole
+	var roleName string = role.NameRole
 
 	t1, t2, err := utils.FormateDate(data1, data2)
-
 	if err != nil {
 		return http.StatusBadRequest, gin.H{"error": err}
 	}
 
-	role_name_upper := strings.ToUpper(role_name)
+	roleNameUpper := strings.ToUpper(roleName)
 
-	if role_name_upper == "ADMIN" || role_name_upper == "GESTOR" {
+	if roleNameUpper == "ADMIN" || roleNameUpper == "GESTOR" {
 		status, response := GetMetricsRole(IDProject, t1, t2, 0)
-
-		return status, response
-	} else {
-		status, response := GetMetricsRole(IDProject, t1, t2, idUser)
-
 		return status, response
 	}
+
+	status, response = GetMetricsRole(IDProject, t1, t2, idUser)
+	return status, response
 }
 
 func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int64, response gin.H) {

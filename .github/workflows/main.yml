@@ -69,16 +69,13 @@ jobs:
       - name: Run tests with coverage and generate reports
         working-directory: src
         run: |
-          # Cria o diretório coverage_report na raiz do projeto
-          mkdir -p ../coverage_report
+          EXCLUDE_DIRS="dto models docs"
+          PACKAGES=$(go list ./... | grep -Ev "$(echo $EXCLUDE_DIRS | sed 's/ /|/g')")
 
-          # Executa os testes e gera o arquivo de cobertura
-          go test $(go list ./... | grep -v '/models' | grep -v '/dto' | grep -v '_test.go') \
-            -coverprofile=../coverage_report/coverage.out \
+          go test $PACKAGES \
+            -coverprofile=coverage.out \
             -covermode=atomic \
             -coverpkg=./... \
-            -cover \
-            -run=. \
             -tags=integration \
             -vet=off
 
@@ -86,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage_report/
+          path: src/coverage.out
 
       - name: Build application
         working-directory: src
@@ -112,18 +109,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-report
-          path: coverage_report/
+          path: src/
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=iNineBD_Track-5Sem2025Server
-            -Dsonar.organization=ininetrack
-            -Dsonar.projectBaseDir=src
-            -Dsonar.exclusions=**/*_test.go,**/models/**,**/dto/**
-            -Dsonar.go.coverage.reportPaths=coverage_report/coverage.out
-            -Dsonar.coverage.exclusions=**/*_test.go,**/models/**,**/dto/**
-            -Dsonar.verbose=true
