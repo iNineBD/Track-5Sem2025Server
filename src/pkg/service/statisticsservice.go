@@ -17,36 +17,31 @@ func GetMetrics(IDProject int64, data1 string, data2 string, idUser int64, idRol
 	var role models.DimRole
 
 	err := utils.GetProject(int64(IDProject))
-
 	if err != nil {
 		return http.StatusBadRequest, gin.H{"error": err.Error()}
 	}
 
 	result := database.DB.Where("id_role = ?", idRole).First(&role)
-
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
 	}
 
-	var role_name string = role.NameRole
+	var roleName string = role.NameRole
 
 	t1, t2, err := utils.FormateDate(data1, data2)
-
 	if err != nil {
 		return http.StatusBadRequest, gin.H{"error": err}
 	}
 
-	role_name_upper := strings.ToUpper(role_name)
+	roleNameUpper := strings.ToUpper(roleName)
 
-	if role_name_upper == "ADMIN" || role_name_upper == "GESTOR" {
+	if roleNameUpper == "ADMIN" || roleNameUpper == "GESTOR" {
 		status, response := GetMetricsRole(IDProject, t1, t2, 0)
-
-		return status, response
-	} else {
-		status, response := GetMetricsRole(IDProject, t1, t2, idUser)
-
 		return status, response
 	}
+
+	status, response = GetMetricsRole(IDProject, t1, t2, idUser)
+	return status, response
 }
 
 func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser int64) (status int, response gin.H) {
@@ -92,9 +87,22 @@ func GetMetricsRole(IDProject int64, data1 time.Time, data2 time.Time, idUser in
 		return http.StatusBadRequest, err2
 	}
 
-	response = gin.H{"success": statisticsdto.GetStatisticsResponse{TagData: listCardsPerTag, UserData: listCardsPerUser,
-		StatusData: listCardsPerStatus, ReworkCards: listCardsRework, StartedCards: listCardsStarted, FinishedCards: listCardsFinished,
-		ExecutionCards: listCardsTimeExecution}}
+	if len(listCardsPerTag) == 0 && len(listCardsPerUser) == 0 &&
+		len(listCardsPerStatus) == 0 && len(listCardsRework) == 0 &&
+		len(listCardsStarted) == 0 && len(listCardsFinished) == 0 &&
+		len(listCardsTimeExecution) == 0 {
+		return http.StatusBadRequest, gin.H{"error": "nenhum dado encontrado para os parâmetros informados"}
+	}
+
+	response = gin.H{"success": statisticsdto.GetStatisticsResponse{
+		TagData:        listCardsPerTag,
+		UserData:       listCardsPerUser,
+		StatusData:     listCardsPerStatus,
+		ReworkCards:    listCardsRework,
+		StartedCards:   listCardsStarted,
+		FinishedCards:  listCardsFinished,
+		ExecutionCards: listCardsTimeExecution,
+	}}
 
 	return http.StatusOK, response
 }
@@ -193,7 +201,6 @@ func GetListCardsFinished(IDProject int64, data1 time.Time, data2 time.Time, idU
 	} else {
 		result = database.DB.Raw(`select * from get_qtd_cards_criados_por_projeto_operador($1,$2,$3,$4)`, IDProject, data1, data2, idUser).Find(&listCardsFinished)
 	}
-
 
 	if result.Error != nil {
 		return nil, gin.H{"error": "erro ao retornar a quantidade de cards finalizados por projet"}

@@ -21,9 +21,9 @@ func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao trazer a role do usuário"}
 	}
-	var role_name string = role.NameRole
+	var roleName string = role.NameRole
 
-	if strings.ToUpper(role_name) == "ADMIN" {
+	if strings.ToUpper(roleName) == "ADMIN" {
 		result = database.DB.Find(&projects)
 	} else {
 		result = database.DB.Raw(`SELECT dp.id_project, dp.name_project, dp.description FROM fato_cards fc
