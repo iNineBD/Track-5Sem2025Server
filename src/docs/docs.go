@@ -96,6 +96,24 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/api/platforms/data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays all platforms",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plataforms"
+                ],
+                "summary": "Display of all platforms registered",
+                "responses": {}
+            }
+        },
         "/api/projects/data": {
             "get": {
                 "security": [
