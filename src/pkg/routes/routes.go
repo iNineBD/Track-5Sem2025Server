@@ -39,7 +39,7 @@ func HandlleRequest() {
 
 		plataforms := protected.Group("/platforms")
 		{
-			plataforms.GET("/data", middleware.Auth(), controller.GetPlatforms)
+			plataforms.GET("/data/:idPlatform", middleware.Auth(), controller.GetPlatforms)
 		}
 		projects := protected.Group("/projects")
 		{
