@@ -117,22 +117,3 @@ After execution, convert the generated coverage.out file to .html for better vis
 ```bash
 go tool cover -html=coverage_report/coverage.out -o coverage_report/coverage.html
 ```
-
-   - Open the generated HTML report in the browser (on Unix systems such as Linux or MacOS)
-
-         ```bash
-         xdg-open coverage_report/coverage.html
-         ```
-
-   - To MacOS, you can use:
-
-      ```bash
-      open coverage_report/coverage.html
-      ```
-
-   - On Windows, you can simply open the file directly or use:
-
-      ```bash
-      start coverage_report/coverage.html
-      ```
----
