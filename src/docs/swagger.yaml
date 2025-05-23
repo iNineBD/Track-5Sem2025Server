@@ -107,9 +107,15 @@ paths:
       summary: Display of all platforms registered
       tags:
       - Plataforms
-  /api/projects/data:
+  /api/projects/data/{idPlatform}:
     get:
       description: This endpoint displays all projects
+      parameters:
+      - description: Id da plataforma para busca
+        in: path
+        name: idPlatform
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
