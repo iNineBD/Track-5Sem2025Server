@@ -33,6 +33,7 @@ func GetProjects(idUser int64, idRole int64, idPlatform int64) (int, gin.H) {
 	}
 
 	fmt.Println(projects)
+	fmt.Println("ajuda ", result.Error)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao buscar projetos"}
