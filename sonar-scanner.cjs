@@ -1,5 +1,5 @@
 // sonar-scanner.cjs
-const scanner = require('sonar-scanner').default;
+const scanner = require('sonar-scanner');
 
 scanner({
   serverUrl: 'http://144.22.212.19:9001',
