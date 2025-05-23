@@ -1,0 +1,15 @@
+env "gorm" {
+  # Caminho para o modelo GORM
+  driver = "go://<seu-modulo-go>/pkg/models.GetModels"
+
+  # URL de conexão com o banco de dados
+  url = "postgres://<usuario>:<senha>@<host>:<porta>/<database>?sslmode=disable"
+
+  # Banco de desenvolvimento
+  dev = "docker://postgres/15/dev?search_path=public"
+
+  migration {
+    # Diretório local onde estão os arquivos de migration
+    dir = "file://migrations"
+  }
+}
