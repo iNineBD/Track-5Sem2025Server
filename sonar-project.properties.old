@@ -1,0 +1,28 @@
+# Identificação do projeto - SONARCLOUD TRACK
+# Unique identifier for the project in SonarCloud
+sonar.projectKey=iNineBD_Track-5Sem2025Server
+sonar.organization=ininetrack
+sonar.projectName=Track-5Sem2025Server
+sonar.projectVersion=1.0
+ 
+# Path is relative to the sonar-project.properties file.
+# Replace "\" by "/" on Windows.
+sonar.projectBaseDir=src
+ 
+# Source code encoding. Default is the system's default encoding
+sonar.sourceEncoding=UTF-8
+
+# Ignorar diretórios e arquivos irrelevantes na análise
+sonar.exclusions=**/*_test.go,**/models/**,**/dto/**,**/docs/**
+
+# Ignorar arquivos na análise de cobertura também
+sonar.coverage.exclusions=**/*_test.go,**/models/**,**/dto/**,**/docs/**
+
+# Caminho do relatório de cobertura (gerado no src)
+sonar.go.coverage.reportPaths=coverage.out
+
+# URL do SonarCloud
+sonar.host.url=https://sonarcloud.io
+
+# Verbose para debugging
+sonar.verbose=true

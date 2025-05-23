@@ -13,6 +13,16 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title API Inine-Track
+// @version 1.0
+// @description Esta é uma API feita para análise de dos projetos no sistema taiga
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @type apiKey
+// @name Authorization
 func HandlleRequest() {
 	r := gin.Default()
 	r.Use(config.CorsConfig())
@@ -24,16 +34,21 @@ func HandlleRequest() {
 	}
 
 	protected := r.Group("/api")
-	protected.Use(middleware.JWTMiddleware())
+	protected.Use()
 	{
-		projects := r.Group("/projects")
+		projects := protected.Group("/projects")
 		{
-			projects.GET("/data", controller.GetProjects)
+			projects.GET("/data", middleware.Auth(), controller.GetProjects)
 		}
-
-		statistics := r.Group("/statistics")
+		statistics := protected.Group("/statistics")
 		{
-			statistics.GET("/data/:id", controller.GetStatisticsData)
+			statistics.GET("/data/:id", middleware.Auth(), controller.GetStatisticsData)
+		}
+		usermanagement := protected.Group("/usermanagement")
+		{
+			usermanagement.GET("/data", middleware.Auth(), controller.GetRelationUserRole)
+			usermanagement.GET("/data/roles", middleware.Auth(), controller.GetRoles)
+			usermanagement.PUT("/update", middleware.Auth(), controller.UpdateRoleUser)
 		}
 	}
 

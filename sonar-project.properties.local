@@ -1,0 +1,25 @@
+# Identificação do projeto - SONARQUBE LOCAL, DOCKER
+sonar.projectKey=Track-5Sem2025Server
+sonar.projectName=Track-5Sem2025Server
+sonar.projectVersion=1.0
+
+# Linguagem
+sonar.language=go
+
+# Caminho base do código-fonte
+sonar.sources=src
+
+# Caminho para o coverage report (gerado pelo go test)
+sonar.go.coverage.reportPaths=src/coverage.out
+
+# Exclusões
+sonar.exclusions=**/dto/**, **/models/**, **/docs/**
+
+# Source code encoding. Default is the system's default encoding
+sonar.sourceEncoding=UTF-8
+
+# URL do SonarQube
+sonar.host.url=http://localhost:9001
+
+# Token de autenticação
+sonar.login=sqa_841dbc7f17f32ea9b448979149fc7afca7978d28

@@ -1,23 +1,21 @@
-name: Build, Test and SonarCloud Analysis
+name: Build, Test and SonarCloud on Merge to Main (Go)
 
 on:
   pull_request:
+    types: [closed]
     branches:
       - main
-      - sprint-1
-      - sprint-2
-      - sprint-3
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  build-and-analyze:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0       
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -28,8 +26,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/go/pkg/mod
             ~/.cache/go-build
+            ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
@@ -42,38 +40,11 @@ jobs:
           fi
           go mod download
 
-      - name: Create .env file
-        working-directory: src
-        run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" > ../.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ../.env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ../.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ../.env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> ../.env
-          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> ../.env
-
-      - name: Create .env file in service
-        working-directory: src/pkg/service
-        run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" > .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_SCHEMA=${{ secrets.DB_SCHEMA }}" >> .env
-
-      - name: Verify .env file (debug)
-        working-directory: src
-        run: |
-          ls -la ../
-          cat ../.env
-
       - name: Run tests with coverage and generate reports
         working-directory: src
         run: |
           EXCLUDE_DIRS="dto models docs"
           PACKAGES=$(go list ./... | grep -Ev "$(echo $EXCLUDE_DIRS | sed 's/ /|/g')")
-
           go test $PACKAGES \
             -coverprofile=coverage.out \
             -covermode=atomic \
@@ -87,14 +58,10 @@ jobs:
           name: coverage-report
           path: src/coverage.out
 
-      - name: Build application
-        working-directory: src
-        run: go build -v ./...
-
   sonarcloud-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: build-and-analyze
 
     steps:
       - name: Checkout repository
@@ -113,7 +80,7 @@ jobs:
           name: coverage-report
           path: src
 
-      - name: SonarQube Scan
+      - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -130,4 +97,4 @@ jobs:
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.verbose=true
-            -Dsonar.branch.name=${{ github.head_ref }}
+            -Dsonar.branch.name=main

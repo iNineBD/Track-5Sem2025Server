@@ -65,6 +65,14 @@ Before starting, make sure that:
 
    Done! Now you are ready to explore the analytical data of Track-5Sem2025Server and use it in your application or for visualization.
 
+### Authorization in Swagger
+
+To authorize in Swagger, after copying the token, you need to prepend the word "Bearer" followed by a space before the token. For example:
+
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFuZHJlbHVpejEwODhAZ21haWwuY29tIiwiZXhwIjoxNzQ2NTc2NDE2LCJyb2xlIjo5OTY1NjEyLCJ1c2VyX2lkIjoyfQ.AJIwXmhVofrykeamLzUQQxu7WkvZvfQc6cOzDt5-P7w
+```
+
 ### Main Features
 
 - **Project Query**: Displays all projects registered in the Taiga system.
@@ -95,7 +103,13 @@ go fmt ./...
 Run all tests and validate the coverage
 
 ```bash
-go test -v -coverprofile=coverage_report/coverage.out -covermode=atomic ./...
+go test -v -coverprofile=coverage.out -covermode=atomic ./...
+```
+
+Run tests excluding models and dto
+
+```bash
+go test -v $(go list ./... | grep -Ev 'models|dto') -coverprofile=coverage.out -covermode=atomic
 ```
 
 After execution, convert the generated coverage.out file to .html for better visualization:
