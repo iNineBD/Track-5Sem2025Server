@@ -1,7 +1,7 @@
 // sonar-scanner.cjs
-const scanner = require('sonar-scanner');
+const sonarScanner = require('sonar-scanner');
 
-scanner({
+sonarScanner({
   serverUrl: 'http://144.22.212.19:9001',
   token: process.env.SONAR_TOKEN,
   options: {
@@ -16,4 +16,6 @@ scanner({
     'sonar.branch.name': process.env.GITHUB_REF_NAME || 'main',
     'sonar.verbose': 'true'
   }
+}, () => {
+  console.log('Sonar scan finished');
 });
