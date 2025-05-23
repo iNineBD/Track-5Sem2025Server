@@ -178,4 +178,4 @@ jobs:
             -Dsonar.branch.name=main \
             -Dsonar.host.url=http://144.22.212.19:9001 \
             -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.verbose=true'
+            -Dsonar.verbose=true
