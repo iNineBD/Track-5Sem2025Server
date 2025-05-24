@@ -36,9 +36,14 @@ func HandlleRequest() {
 	protected := r.Group("/api")
 	protected.Use()
 	{
+
+		plataforms := protected.Group("/platforms")
+		{
+			plataforms.GET("/data", middleware.Auth(), controller.GetPlatforms)
+		}
 		projects := protected.Group("/projects")
 		{
-			projects.GET("/data", middleware.Auth(), controller.GetProjects)
+			projects.GET("/data/:idPlatform", middleware.Auth(), controller.GetProjects)
 		}
 		statistics := protected.Group("/statistics")
 		{
