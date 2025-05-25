@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetProjects(idUser int64, idRole int64) (int, gin.H) {
+func GetProjects(idUser int64, idRole int64, idPlatform int64) (int, gin.H) {
 	var listProjects []projectdto.GetProjectsResponse
 	var projects []models.DimProject
 	var role models.DimRole
@@ -24,14 +24,16 @@ func GetProjects(idUser int64, idRole int64) (int, gin.H) {
 	var roleName string = role.NameRole
 
 	if strings.ToUpper(roleName) == "ADMIN" {
-		result = database.DB.Find(&projects)
+		result = database.DB.Preload("DimPlatform").Where("id_platform = ?", idPlatform).Find(&projects)
 	} else {
 		result = database.DB.Raw(`SELECT dp.id_project, dp.name_project, dp.description FROM fato_cards fc
-		INNER JOIN dim_project dp ON fc.id_project = dp.id_project WHERE fc.id_user = $1
-		GROUP BY dp.id_project`, idUser).Find(&projects)
+		INNER JOIN dim_project dp ON fc.id_project = dp.id_project
+		INNER JOIN dim_platform dpa on dpa.id_platform = dp.id_platform WHERE fc.id_user = $1 and dp.id_platform = $2
+		GROUP BY dp.id_project`, idUser, idPlatform).Find(&projects)
 	}
 
 	fmt.Println(projects)
+	fmt.Println("ajuda ", result.Error)
 
 	if result.Error != nil {
 		return http.StatusBadRequest, gin.H{"error": "erro ao buscar projetos"}

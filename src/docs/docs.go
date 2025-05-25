@@ -96,7 +96,25 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/api/projects/data": {
+        "/api/platforms/data": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This endpoint displays all platforms",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Plataforms"
+                ],
+                "summary": "Display of all platforms registered",
+                "responses": {}
+            }
+        },
+        "/api/projects/data/{idPlatform}": {
             "get": {
                 "security": [
                     {
@@ -111,6 +129,15 @@ const docTemplate = `{
                     "Projects"
                 ],
                 "summary": "Display of all projects registered in taiga",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id da plataforma para busca",
+                        "name": "idPlatform",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },

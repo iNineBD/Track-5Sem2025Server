@@ -96,9 +96,26 @@ paths:
       summary: Define nova senha
       tags:
       - Usuário
-  /api/projects/data:
+  /api/platforms/data:
+    get:
+      description: This endpoint displays all platforms
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Display of all platforms registered
+      tags:
+      - Plataforms
+  /api/projects/data/{idPlatform}:
     get:
       description: This endpoint displays all projects
+      parameters:
+      - description: Id da plataforma para busca
+        in: path
+        name: idPlatform
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
