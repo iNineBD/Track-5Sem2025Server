@@ -9,5 +9,6 @@ RUN go build -o server main.go
 FROM debian:bookworm-slim
 WORKDIR /app
 COPY --from=builder /app/src/server ./server
+COPY src/.env .env
 EXPOSE 8080
 CMD ["./server"]
