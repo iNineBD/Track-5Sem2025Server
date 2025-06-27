@@ -67,7 +67,7 @@ func TestGetListCardTags_OperatorUser(t *testing.T) {
 func TestGetMetricsRole_Admin(t *testing.T) {
 	IDProject := int64(1648306)
 	idUser := int64(765865)
-	data1 := time.Now().AddDate(0, 0, -100)
+	data1 := time.Now().AddDate(0, 0, -150)
 	data2 := time.Now()
 
 	status, response := GetMetricsRole(IDProject, data1, data2, idUser)
