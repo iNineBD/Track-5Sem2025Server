@@ -124,3 +124,5 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR2_TOKEN }}
             -Dsonar.go.coverage.reportPaths=src/coverage.out
             -Dsonar.verbose=true
+
+            
