@@ -18,7 +18,7 @@ Before starting, make sure that:
 ### Steps to Configure and Run
 
 1. **Clone the Repository**  
-   Open the terminal and run the command below to clone the repository:
+   Open the terminal and run the command below to clone the repositor
 
    ```bash
    git clone https://github.com/ininetrack/Track-5Sem2025Server.git
