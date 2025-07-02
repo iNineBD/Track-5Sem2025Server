@@ -1,16 +1,14 @@
-name: Build, Test and SonarCloud Analysis
+name: Build, Test, SonarAnalysis and Deploy
 
 on:
+  push:
+    branches: ["**"] # Executa em qualquer push
   pull_request:
-    branches:
-      - main
-      - sprint-1
-      - sprint-2
-      - sprint-3
+    branches: ["**"] # Executa em qualquer PR
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  lint-and-build:
+    name: GolangCI-Lint and Build
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +19,61 @@ jobs:
 
       - name: Set up Go
         uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.1'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies
+        working-directory: src
+        run: |
+          if [ ! -f go.sum ]; then
+            go mod tidy
+          fi
+          go mod download
+
+      - name: Install GolangCI-Lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.8
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Format code with gofmt
+        working-directory: src
+        run: go fmt ./...
+
+      - name: Ensure Go Modules
+        working-directory: src
+        run: go mod tidy -v
+
+      - name: Run GolangCI-Lint
+        working-directory: src
+        run: golangci-lint run ./...
+
+      - name: Build application
+        working-directory: src
+        run: go build -v ./...
+
+  unit-tests:
+    name: Unit Tests and Coverage
+    runs-on: ubuntu-latest
+    needs: lint-and-build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
           go-version: '1.22.1'
 
@@ -73,7 +126,6 @@ jobs:
         run: |
           EXCLUDE_DIRS="dto models docs"
           PACKAGES=$(go list ./... | grep -Ev "$(echo $EXCLUDE_DIRS | sed 's/ /|/g')")
-
           go test $PACKAGES \
             -coverprofile=coverage.out \
             -covermode=atomic \
@@ -87,14 +139,10 @@ jobs:
           name: coverage-report
           path: src/coverage.out
 
-      - name: Build application
-        working-directory: src
-        run: go build -v ./...
-
   sonarcloud-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: unit-tests
 
     steps:
       - name: Checkout repository
@@ -113,7 +161,7 @@ jobs:
           name: coverage-report
           path: src
 
-      - name: SonarQube Scan
+      - name: SonarCloud Analysis
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -137,12 +185,17 @@ jobs:
   sonarqube-selfhosted:
     name: SonarQube Self-hosted Analysis
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: unit-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.1'
 
       - name: Download coverage report
         uses: actions/download-artifact@v4
@@ -150,31 +203,15 @@ jobs:
           name: coverage-report
           path: src
 
-      - name: Set up Java 17 for SonarScanner
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 17
-
-      - name: Install dependencies (scanner needs)
-        run: npm install
-
-      - name: Run SonarQube Scanner (CLI)
+      - name: SonarQube Analysis (Docker Remote)
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR2_TOKEN }}
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-          ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
-            -Dsonar.projectKey=Track-5Sem2025Server \
-            -Dsonar.projectName=Track-5Sem2025Server \
-            -Dsonar.projectVersion=1.0 \
-            -Dsonar.sources=src \
-            -Dsonar.language=go \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.go.coverage.reportPaths=src/coverage.out \
-            -Dsonar.exclusions=**/*_test.go,**/models/**,**/dto/**,**/docs/** \
-            -Dsonar.coverage.exclusions=**/*_test.go,**/models/**,**/dto/**,**/docs/** \
-            -Dsonar.host.url=http://144.22.212.19:9001 \
-            -Dsonar.login=$SONAR_TOKEN \
+        with:
+          args: >
+            -Dsonar.projectKey=Track-5Sem2025Server
+            -Dsonar.sources=src
+            -Dsonar.host.url=http://144.22.212.19:9001
+            -Dsonar.login=${{ secrets.SONAR2_TOKEN }}
+            -Dsonar.go.coverage.reportPaths=src/coverage.out
             -Dsonar.verbose=true
