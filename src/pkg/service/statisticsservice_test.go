@@ -1,6 +1,7 @@
 package service
 
 import (
+	"inine-track/pkg/database"
 	"net/http"
 	"testing"
 	"time"
@@ -8,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// func init() {
-// 	database.ConnectDB()
-// }
+func init() {
+	database.ConnectDB()
+}
 
 // Teste para GetListCardTags com admin (idUser = 0)
 func TestGetListCardTags_AdminUser(t *testing.T) {
