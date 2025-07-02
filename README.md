@@ -24,8 +24,17 @@ Before starting, make sure that:
    git clone https://github.com/ininetrack/Track-5Sem2025Server.git
    cd Track-5Sem2025Server/src
    ```
+2. ## Standardization of git commit
 
-2. **Configure the Database**  
+After cloning and installing the dependencies, it is necessary to activate the git commit standardization, file `.pre-commit-config.yaml`, follow with the commands:
+
+```bash
+mv .git/hooks/pre-commit.sample .git/hooks/pre-commit.sample.old
+
+pre-commit install --hook-type commit-msg --hook-type pre-commi
+```
+
+3. **Configure the Database**  
    Ensure that PostgreSQL is configured with the required credentials. Update the `.env` file with the database information:
 
    ```env
@@ -42,21 +51,21 @@ Before starting, make sure that:
    EMAIL_HOST_FROM=email-host-from
    ```
 
-3. **Install Dependencies**  
+4. **Install Dependencies**  
    Run the command below to install the project dependencies:
 
    ```bash
    go mod tidy
    ```
 
-4. **Run the Application**  
+5. **Run the Application**  
    Start the application with the command:
 
    ```bash
    go run main.go
    ```
 
-5. **Access the Application in the Browser**  
+6. **Access the Application in the Browser**  
    Once the application is running, open your preferred browser and enter the following address:
 
    ```
@@ -105,16 +114,3 @@ Run all tests and validate the coverage
 ```bash
 go test -v -coverprofile=coverage.out -covermode=atomic ./...
 ```
-
-Run tests excluding models and dto
-
-```bash
-go test -v $(go list ./... | grep -Ev 'models|dto') -coverprofile=coverage.out -covermode=atomic
-```
-
-After execution, convert the generated coverage.out file to .html for better visualization:
-
-```bash
-go tool cover -html=coverage_report/coverage.out -o coverage_report/coverage.html
-```
-
